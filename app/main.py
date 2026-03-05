@@ -116,12 +116,20 @@ KV = '''
         BoxLayout:
             size_hint_y: 0.12
             padding: 15
+            spacing: 10
             canvas.before:
                 Color:
                     rgba: 0.15, 0.15, 0.2, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
+            
+            Image:
+                source: root.get_icon_path()
+                size_hint_x: None
+                width: self.height
+                allow_stretch: True
+                keep_ratio: True
             
             Label:
                 text: 'Camino Audio Guides'
@@ -509,6 +517,17 @@ class TourSelectScreen(Screen):
         super().__init__(**kwargs)
         self.tours = []
         Clock.schedule_once(self.load_tours, 0.1)
+    
+    def get_icon_path(self):
+        """Get the path to the app icon."""
+        possible_paths = [
+            Path(__file__).parent.parent / 'icon.png',
+            Path(__file__).parent / 'icon.png',
+        ]
+        for path in possible_paths:
+            if path.exists():
+                return str(path)
+        return ''
     
     def load_tours(self, dt):
         """Discover and display available tours."""
