@@ -3,7 +3,7 @@
 
 from PIL import Image, ImageDraw, ImageFont
 import os
-import sys
+
 
 def create_cover(tour_dir: str, title: str):
     width, height = 800, 600
