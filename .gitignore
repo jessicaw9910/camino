@@ -1,3 +1,4 @@
 *.mp3
 gTTS/ 
 cache/
+.DS_Store
