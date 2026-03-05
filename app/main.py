@@ -23,8 +23,6 @@ import webbrowser
 from pathlib import Path
 from functools import partial
 
-import pygame  # For reliable audio with seek support
-
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
@@ -44,6 +42,15 @@ from kivy.properties import (
     ListProperty, ObjectProperty
 )
 from kivy.utils import platform
+
+# Audio backend: pygame on desktop (supports seek), MediaPlayer on Android
+USE_PYGAME = platform not in ('android', 'ios')
+if USE_PYGAME:
+    import pygame
+    pygame.mixer.init()
+elif platform == 'android':
+    from jnius import autoclass
+    AndroidMediaPlayer = autoclass('android.media.MediaPlayer')
 
 # Conditional imports for mobile
 GPS_AVAILABLE = False
@@ -899,8 +906,7 @@ class TourScreen(Screen):
         self.audio_length = 0  # Track audio duration
         self.current_audio_file = None
         self.citation_urls = {}  # Map citation numbers to URLs
-        # Initialize pygame mixer
-        pygame.mixer.init()
+        self.sound = None  # SoundLoader sound object (mobile)
     
     def load_tour(self, tour):
         """Load a specific tour."""
@@ -988,7 +994,15 @@ class TourScreen(Screen):
         """Clear the current POI selection."""
         # Stop any playing audio
         Clock.unschedule(self._update_progress)
-        pygame.mixer.music.stop()
+        if USE_PYGAME:
+            pygame.mixer.music.stop()
+        elif self.sound:
+            try:
+                self.sound.stop()
+                self.sound.release()
+            except Exception:
+                pass
+            self.sound = None
         self.seek_offset = 0
         self.is_paused = False
         self.current_audio_file = None
@@ -1017,7 +1031,15 @@ class TourScreen(Screen):
         print(f"[DEBUG] POI body exists: {'body' in poi}")
         # Stop any playing audio first
         Clock.unschedule(self._update_progress)
-        pygame.mixer.music.stop()
+        if USE_PYGAME:
+            pygame.mixer.music.stop()
+        elif self.sound:
+            try:
+                self.sound.stop()
+                self.sound.release()
+            except Exception:
+                pass
+            self.sound = None
         
         self.seek_offset = 0
         self.is_paused = False
@@ -1124,25 +1146,40 @@ class TourScreen(Screen):
 
     def toggle_playback(self):
         """Toggle audio playback for the current POI."""
-        if pygame.mixer.music.get_busy():
-            # Currently playing - pause
-            # Calculate full position: offset + elapsed time
-            elapsed = pygame.mixer.music.get_pos() / 1000.0
-            self.seek_offset = self.seek_offset + elapsed
-            print(f"[PAUSE] Saving position: {self.seek_offset:.2f}")
-            pygame.mixer.music.pause()
-            self.is_paused = True
-            Clock.unschedule(self._update_progress)
-            self.ids.play_btn.text = '▶'
-        elif self.is_paused and self.current_audio_file:
-            # Resume from paused position
-            print(f"[RESUME] Resuming from: {self.seek_offset:.2f}")
-            pygame.mixer.music.unpause()
-            self.is_paused = False
-            self.ids.play_btn.text = '❚❚'
-            self._start_progress_update()
+        if USE_PYGAME:
+            if pygame.mixer.music.get_busy():
+                # Currently playing - pause
+                # Calculate full position: offset + elapsed time
+                elapsed = pygame.mixer.music.get_pos() / 1000.0
+                self.seek_offset = self.seek_offset + elapsed
+                print(f"[PAUSE] Saving position: {self.seek_offset:.2f}")
+                pygame.mixer.music.pause()
+                self.is_paused = True
+                Clock.unschedule(self._update_progress)
+                self.ids.play_btn.text = '▶'
+            elif self.is_paused and self.current_audio_file:
+                # Resume from paused position
+                print(f"[RESUME] Resuming from: {self.seek_offset:.2f}")
+                pygame.mixer.music.unpause()
+                self.is_paused = False
+                self.ids.play_btn.text = '❚❚'
+                self._start_progress_update()
+            else:
+                self.play_audio()
         else:
-            self.play_audio()
+            # Android MediaPlayer
+            if self.sound and self.sound.isPlaying():
+                self.sound.pause()
+                self.is_paused = True
+                Clock.unschedule(self._update_progress)
+                self.ids.play_btn.text = '▶'
+            elif self.is_paused and self.sound:
+                self.sound.start()
+                self.is_paused = False
+                self.ids.play_btn.text = '❚❚'
+                self._start_progress_update()
+            else:
+                self.play_audio()
     
     def play_audio(self, poi=None):
         """Play audio for the specified or current POI."""
@@ -1154,7 +1191,15 @@ class TourScreen(Screen):
         
         # Stop any existing audio
         Clock.unschedule(self._update_progress)
-        pygame.mixer.music.stop()
+        if USE_PYGAME:
+            pygame.mixer.music.stop()
+        elif self.sound:
+            try:
+                self.sound.stop()
+                self.sound.release()
+            except Exception:
+                pass
+            self.sound = None
         
         self.seek_offset = 0
         self.is_paused = False
@@ -1170,19 +1215,34 @@ class TourScreen(Screen):
             self.ids.current_poi_label.text = f"Audio not found: {self.current_poi['name']}"
             return
         
-        # Load and play with pygame
         self.current_audio_file = str(audio_file)
-        pygame.mixer.music.load(self.current_audio_file)
         
-        # Get audio length using pygame.mixer.Sound (load separately for duration)
-        try:
-            sound = pygame.mixer.Sound(self.current_audio_file)
-            self.audio_length = sound.get_length()
-            del sound  # Free memory
-        except:
-            self.audio_length = 0
+        if USE_PYGAME:
+            # Load and play with pygame (desktop)
+            pygame.mixer.music.load(self.current_audio_file)
+            
+            # Get audio length using pygame.mixer.Sound (load separately for duration)
+            try:
+                sound = pygame.mixer.Sound(self.current_audio_file)
+                self.audio_length = sound.get_length()
+                del sound  # Free memory
+            except:
+                self.audio_length = 0
+            
+            pygame.mixer.music.play()
+        else:
+            # Load and play with Android MediaPlayer
+            try:
+                self.sound = AndroidMediaPlayer()
+                self.sound.setDataSource(self.current_audio_file)
+                self.sound.prepare()
+                self.audio_length = self.sound.getDuration() / 1000.0
+                self.sound.start()
+            except Exception as e:
+                print(f"MediaPlayer error: {e}")
+                self.sound = None
+                self.audio_length = 0
         
-        pygame.mixer.music.play()
         self.ids.play_btn.text = '❚❚'
         self.ids.current_poi_label.text = f"Playing: [b]{self.current_poi['num']}: {self.current_poi['name']}[/b]"
         
@@ -1199,20 +1259,28 @@ class TourScreen(Screen):
         Clock.schedule_interval(self._update_progress, 0.5)
     
     def _update_progress(self, dt):
-        """Update progress bar and time labels using pygame."""
-        # Check if audio finished
-        if not pygame.mixer.music.get_busy() and self.current_audio_file and not self.is_paused:
-            # Audio finished playing
-            Clock.unschedule(self._update_progress)
-            self.on_audio_complete()
-            return
-        
-        # Get position from pygame (returns ms, -1 if not playing)
-        pos_ms = pygame.mixer.music.get_pos()
-        if pos_ms >= 0:
-            pos = pos_ms / 1000.0 + self.seek_offset
+        """Update progress bar and time labels."""
+        if USE_PYGAME:
+            # Check if audio finished
+            if not pygame.mixer.music.get_busy() and self.current_audio_file and not self.is_paused:
+                Clock.unschedule(self._update_progress)
+                self.on_audio_complete()
+                return
+            # Get position from pygame (returns ms, -1 if not playing)
+            pos_ms = pygame.mixer.music.get_pos()
+            if pos_ms >= 0:
+                pos = pos_ms / 1000.0 + self.seek_offset
+            else:
+                pos = self.seek_offset
         else:
-            pos = self.seek_offset
+            # Android MediaPlayer
+            if not self.sound:
+                return
+            if not self.sound.isPlaying() and self.current_audio_file and not self.is_paused:
+                Clock.unschedule(self._update_progress)
+                self.on_audio_complete()
+                return
+            pos = self.sound.getCurrentPosition() / 1000.0
         
         length = self.audio_length
         
@@ -1226,18 +1294,30 @@ class TourScreen(Screen):
     
     def seek_audio(self, value):
         """Seek to a position in the audio."""
-        if self.current_audio_file and self.audio_length > 0:
-            print(f"[SEEK] seeking to {value:.2f}, length={self.audio_length:.2f}")
-            # Restart playback from the new position
+        if not self.current_audio_file or self.audio_length <= 0:
+            return
+        print(f"[SEEK] seeking to {value:.2f}, length={self.audio_length:.2f}")
+        if USE_PYGAME:
             pygame.mixer.music.stop()
             pygame.mixer.music.play(start=value)
             self.seek_offset = value
+            self.is_paused = False
+        elif self.sound:
+            self.sound.seekTo(int(value * 1000))
             self.is_paused = False
     
     def stop_audio(self):
         """Stop any currently playing audio and clear selection."""
         Clock.unschedule(self._update_progress)
-        pygame.mixer.music.stop()
+        if USE_PYGAME:
+            pygame.mixer.music.stop()
+        elif self.sound:
+            try:
+                self.sound.stop()
+                self.sound.release()
+            except Exception:
+                pass
+            self.sound = None
         self.seek_offset = 0
         self.is_paused = False
         self.audio_length = 0
@@ -1341,7 +1421,8 @@ class TourScreen(Screen):
         self.check_poi_proximity()
         
         # Update current POI label with distance if a POI is selected
-        if self.current_poi and not pygame.mixer.music.get_busy():
+        is_playing = pygame.mixer.music.get_busy() if USE_PYGAME else (self.sound and self.sound.isPlaying())
+        if self.current_poi and not is_playing:
             distance = haversine_distance(lat, lon, self.current_poi['lat'], self.current_poi['lon'])
             self.ids.current_poi_label.text = f"[b]{self.current_poi['num']}: {self.current_poi['name']}[/b] ({distance:.0f}m)"
     

@@ -28,7 +28,8 @@ source.exclude_dirs = tests,bin,.venv,__pycache__,.buildozer,.git,src
 version = 1.0.0
 
 # (list) Application requirements
-requirements = python3,kivy==2.3.0,pillow,plyer,pygame,certifi,requests,urllib3,charset-normalizer,idna,kivy-garden.mapview
+# Note: pygame removed - using Kivy SoundLoader on Android
+requirements = python3,kivy==2.3.0,pillow,plyer,certifi,requests,urllib3,charset-normalizer,idna,kivy-garden.mapview
 
 # (str) Custom source folders for requirements
 #requirements.source.kivy = ../../kivy

@@ -1,4 +1,6 @@
 *.mp3
-gTTS/ 
+gTTS/
 cache/
 .DS_Store
+.buildozer/
+bin/
