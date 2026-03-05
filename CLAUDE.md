@@ -40,6 +40,13 @@ python src/fetch_resources.py <tour_name> --force     # re-fetch even if files a
 python src/analyze_map.py rio_grande_rift
 python src/analyze_map.py rio_grande_rift --threshold 8 --gaps-only
 python src/analyze_map.py rio_grande_rift --stubs     # writes data/rio_grande_rift/candidates.json
+
+# Validate that all POI GPS triggers are within firing distance of the KML route line
+python src/validate_triggers.py rio_grande_rift            # warn >500m, fail >2000m
+python src/validate_triggers.py rio_grande_rift --suggest-fixes   # print nearest route coords for ⚠/✗ POIs
+python src/validate_triggers.py rio_grande_rift --nums 2,5,44    # check specific POIs only
+# Note: El Paso city POIs (1–9) are legitimately off the main route KML — drivers explore the
+# city freely, so these are expected outliers and should be ignored in trigger validation.
 ```
 
 ## Architecture
