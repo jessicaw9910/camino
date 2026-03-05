@@ -294,28 +294,27 @@ KV = '''
                             font_size: '11sp'
                 
                 BoxLayout:
-                    orientation: 'vertical'
-                    size_hint_x: 0.45
+                    size_hint_x: 0.40
                     spacing: 5
                     
-                    BoxLayout:
-                        spacing: 5
-                        
-                        Button:
-                            id: play_btn
-                            text: 'Play'
-                            on_release: root.toggle_playback()
-                            disabled: True
-                        
-                        Button:
-                            id: stop_btn
-                            text: 'Stop'
-                            on_release: root.stop_audio()
-                            disabled: True
+                    Button:
+                        id: play_btn
+                        text: '▶'
+                        font_size: '18sp'
+                        on_release: root.toggle_playback()
+                        disabled: True
+                    
+                    Button:
+                        id: stop_btn
+                        text: '⏹'
+                        font_size: '18sp'
+                        on_release: root.stop_audio()
+                        disabled: True
                     
                     ToggleButton:
                         id: text_toggle
-                        text: 'Show Text'
+                        text: '▼ Text'
+                        font_size: '12sp'
                         state: 'normal'
                         on_state: root.toggle_text_panel(self.state)
                         disabled: True
@@ -957,7 +956,7 @@ class TourScreen(Screen):
         self.ids.current_poi_label.text = 'Select a point of interest'
         self.ids.play_btn.disabled = True
         self.ids.stop_btn.disabled = True
-        self.ids.play_btn.text = 'Play'
+        self.ids.play_btn.text = '▶'
         self.ids.text_toggle.disabled = True
         self.ids.text_toggle.state = 'normal'
         self.ids.progress_slider.value = 0
@@ -984,7 +983,7 @@ class TourScreen(Screen):
         self.current_poi = poi
         self.ids.current_poi_label.text = f"[b]{poi['num']}: {poi['name']}[/b]"
         self.ids.play_btn.disabled = False
-        self.ids.play_btn.text = 'Play'
+        self.ids.play_btn.text = '▶'
         self.ids.stop_btn.disabled = False
         self.ids.text_toggle.disabled = False
         self.ids.progress_slider.value = 0
@@ -1061,13 +1060,13 @@ class TourScreen(Screen):
             panel.disabled = False
             anim = Animation(pos_hint={'x': 0, 'y': 0.19}, opacity=1, duration=0.25, t='out_cubic')
             anim.start(panel)
-            self.ids.text_toggle.text = 'Hide Text'
+            self.ids.text_toggle.text = '▲ Text'
         else:
             # Slide down off screen
             anim = Animation(pos_hint={'x': 0, 'y': -0.35}, opacity=0, duration=0.2, t='in_cubic')
             anim.bind(on_complete=lambda *_: setattr(panel, 'disabled', True))
             anim.start(panel)
-            self.ids.text_toggle.text = 'Show Text'
+            self.ids.text_toggle.text = '▼ Text'
     
     def on_citation_click(self, instance, ref):
         """Handle citation link clicks."""
@@ -1092,13 +1091,13 @@ class TourScreen(Screen):
             pygame.mixer.music.pause()
             self.is_paused = True
             Clock.unschedule(self._update_progress)
-            self.ids.play_btn.text = 'Play'
+            self.ids.play_btn.text = '▶'
         elif self.is_paused and self.current_audio_file:
             # Resume from paused position
             print(f"[RESUME] Resuming from: {self.seek_offset:.2f}")
             pygame.mixer.music.unpause()
             self.is_paused = False
-            self.ids.play_btn.text = 'Pause'
+            self.ids.play_btn.text = '⏸'
             self._start_progress_update()
         else:
             self.play_audio()
@@ -1142,7 +1141,7 @@ class TourScreen(Screen):
             self.audio_length = 0
         
         pygame.mixer.music.play()
-        self.ids.play_btn.text = 'Pause'
+        self.ids.play_btn.text = '⏸'
         self.ids.current_poi_label.text = f"Playing: [b]{self.current_poi['num']}: {self.current_poi['name']}[/b]"
         
         # Set duration
@@ -1204,7 +1203,7 @@ class TourScreen(Screen):
         self.current_poi = None
         # Reset all UI
         self.ids.current_poi_label.text = 'Select a point of interest'
-        self.ids.play_btn.text = 'Play'
+        self.ids.play_btn.text = '▶'
         self.ids.play_btn.disabled = True
         self.ids.stop_btn.disabled = True
         self.ids.text_toggle.disabled = True
@@ -1226,7 +1225,7 @@ class TourScreen(Screen):
         Clock.unschedule(self._update_progress)
         self.seek_offset = 0
         self.is_paused = False
-        self.ids.play_btn.text = 'Play'
+        self.ids.play_btn.text = '▶'
         self.ids.progress_slider.value = 0
         self.ids.time_label.text = '0:00'
         print("[COMPLETE] Audio finished")
