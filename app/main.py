@@ -73,7 +73,7 @@ KV = '''
 <TourCard>:
     orientation: 'vertical'
     size_hint_y: None
-    height: 220
+    height: 260
     padding: 10
     spacing: 5
     canvas.before:
@@ -86,7 +86,7 @@ KV = '''
     
     AsyncImage:
         source: root.cover_image
-        size_hint_y: 0.7
+        size_hint_y: 0.6
         allow_stretch: True
         keep_ratio: True
     
@@ -94,7 +94,8 @@ KV = '''
         text: root.tour_name
         font_size: '16sp'
         bold: True
-        size_hint_y: 0.15
+        size_hint_y: None
+        height: 28
         text_size: self.size
         halign: 'center'
         valign: 'middle'
@@ -102,11 +103,13 @@ KV = '''
     Label:
         text: root.tour_description
         font_size: '12sp'
-        color: 0.7, 0.7, 0.7, 1
-        size_hint_y: 0.15
-        text_size: self.size
+        color: 0.8, 0.8, 0.8, 1
+        size_hint_y: None
+        height: self.texture_size[1] + 10
+        text_size: self.width, None
         halign: 'center'
-        valign: 'middle'
+        valign: 'top'
+        markup: True
 
 
 <TourSelectScreen>:
@@ -114,9 +117,8 @@ KV = '''
         orientation: 'vertical'
         
         BoxLayout:
-            size_hint_y: 0.12
-            padding: 15
-            spacing: 10
+            size_hint_y: 0.10
+            padding: [15, 10]
             canvas.before:
                 Color:
                     rgba: 0.15, 0.15, 0.2, 1
@@ -124,20 +126,26 @@ KV = '''
                     pos: self.pos
                     size: self.size
             
+            Widget:
+            
             Image:
                 source: root.get_icon_path()
-                size_hint_x: None
-                width: self.height
+                size_hint: None, None
+                size: 50, 50
                 allow_stretch: True
                 keep_ratio: True
             
             Label:
                 text: 'Camino Audio Guides'
-                font_size: '22sp'
+                font_size: '20sp'
                 bold: True
+                size_hint_x: None
+                width: self.texture_size[0]
+            
+            Widget:
         
         ScrollView:
-            size_hint_y: 0.88
+            size_hint_y: 0.90
             
             BoxLayout:
                 id: tour_list
@@ -479,17 +487,43 @@ def discover_tours(data_dir: Path) -> list:
                             cover_image = str(cover)
                             break
                     
-                    # Calculate center point from POIs
+                    # Calculate center point and extent from POIs
                     if pois:
-                        avg_lat = sum(p['lat'] for p in pois) / len(pois)
-                        avg_lon = sum(p['lon'] for p in pois) / len(pois)
+                        lats = [p['lat'] for p in pois]
+                        lons = [p['lon'] for p in pois]
+                        avg_lat = sum(lats) / len(lats)
+                        avg_lon = sum(lons) / len(lons)
+                        # Calculate north-south extent in miles (1 degree lat ≈ 69 miles)
+                        lat_extent = (max(lats) - min(lats)) * 69
+                        # Calculate total duration from POI durations (format: "M:SS")
+                        total_minutes = 0
+                        for p in pois:
+                            dur = p.get('duration', '')
+                            if dur and ':' in dur:
+                                parts = dur.split(':')
+                                total_minutes += int(parts[0]) + int(parts[1]) / 60
                     else:
                         avg_lat, avg_lon = 0, 0
+                        lat_extent = 0
+                        total_minutes = 0
+                    
+                    # Build description with stats
+                    desc_parts = [f"{len(pois)} stops"]
+                    if lat_extent > 0:
+                        desc_parts.append(f"~{int(lat_extent)} mi")
+                    if total_minutes > 0:
+                        hours = int(total_minutes // 60)
+                        mins = int(total_minutes % 60)
+                        if hours > 0:
+                            desc_parts.append(f"{hours}h {mins}m audio")
+                        else:
+                            desc_parts.append(f"{mins}m audio")
+                    description = config.get('description', ' · '.join(desc_parts))
                     
                     tours.append({
                         'id': subdir.name,
                         'name': display_name,
-                        'description': config.get('description', f'{len(pois)} points of interest'),
+                        'description': description,
                         'cover_image': cover_image,
                         'path': subdir,
                         'poi_count': len(pois),
