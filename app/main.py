@@ -102,11 +102,11 @@ KV = '''
 # ──────────────────────────────────────────────────────────────────────────
 
 <TourCard>:
-    orientation: 'vertical'
+    orientation: 'horizontal'
     size_hint_y: None
-    height: 290
-    padding: 10
-    spacing: 5
+    height: 120
+    padding: 0
+    spacing: 0
     canvas.before:
         Color:
             rgba: 0.16, 0.16, 0.22, 1
@@ -114,33 +114,37 @@ KV = '''
             pos: self.pos
             size: self.size
             radius: [12,]
-    
+
     AsyncImage:
         source: root.cover_image
-        size_hint_y: 0.6
+        size_hint_x: 0.32
+        size_hint_y: 1
         allow_stretch: True
-        keep_ratio: True
-    
-    Label:
-        text: root.tour_name
-        font_size: '16sp'
-        bold: True
-        size_hint_y: None
-        height: 28
-        text_size: self.size
-        halign: 'center'
-        valign: 'middle'
-    
-    Label:
-        text: root.tour_description
-        font_size: '12sp'
-        color: 0.8, 0.8, 0.8, 1
-        size_hint_y: None
-        height: self.texture_size[1] + 10
-        text_size: self.width, None
-        halign: 'center'
-        valign: 'top'
-        markup: True
+        keep_ratio: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [14, 10, 12, 10]
+        spacing: 6
+
+        Label:
+            text: root.tour_name
+            font_size: '17sp'
+            bold: True
+            size_hint_y: None
+            height: 28
+            text_size: self.width, None
+            halign: 'left'
+            valign: 'middle'
+
+        Label:
+            text: root.tour_description
+            font_size: '13sp'
+            color: 0.8, 0.8, 0.8, 1
+            text_size: self.width, None
+            halign: 'left'
+            valign: 'top'
+            markup: True
 
 
 <TourSelectScreen>:
@@ -539,8 +543,7 @@ def discover_tours(data_dir: Path) -> list:
                     stats_str = ' · '.join(desc_parts)
                     tour_desc = config.get('description', '')
                     if tour_desc:
-                        wrapped = textwrap.fill(tour_desc, width=48)
-                        description = f"{wrapped}\n[color=aaaaaa][size=11sp]{stats_str}[/size][/color]"
+                        description = f"{tour_desc} [color=aaaaaa][size=11sp]· {stats_str}[/size][/color]"
                     else:
                         description = stats_str
                     
