@@ -16,9 +16,7 @@ Requirements:
 """
 
 import json
-import os
 import re
-import time
 import webbrowser
 from pathlib import Path
 from functools import partial
