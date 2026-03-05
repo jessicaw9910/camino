@@ -18,6 +18,7 @@ Requirements:
 import json
 import os
 import re
+import textwrap
 import webbrowser
 from pathlib import Path
 from functools import partial
@@ -83,7 +84,7 @@ KV = '''
 <TourCard>:
     orientation: 'vertical'
     size_hint_y: None
-    height: 260
+    height: 290
     padding: 10
     spacing: 5
     canvas.before:
@@ -252,9 +253,9 @@ KV = '''
             
             BoxLayout:
                 id: info_panel
-                size_hint_y: 0.14
-                padding: 8
-                spacing: 8
+                size_hint_y: 0.11
+                padding: 6
+                spacing: 6
                 canvas.before:
                     Color:
                         rgba: 0.15, 0.15, 0.2, 1
@@ -333,8 +334,8 @@ KV = '''
                         disabled: True
             
             BoxLayout:
-                size_hint_y: 0.05
-                padding: [10, 2]
+                size_hint_y: 0.08
+                padding: [10, 4]
                 canvas.before:
                     Color:
                         rgba: 0.1, 0.1, 0.15, 1
@@ -533,7 +534,13 @@ def discover_tours(data_dir: Path) -> list:
                             desc_parts.append(f"{hours}h {mins}m audio")
                         else:
                             desc_parts.append(f"{mins}m audio")
-                    description = config.get('description', ' · '.join(desc_parts))
+                    stats_str = ' · '.join(desc_parts)
+                    tour_desc = config.get('description', '')
+                    if tour_desc:
+                        wrapped = textwrap.fill(tour_desc, width=48)
+                        description = f"{wrapped}\n[color=aaaaaa][size=11sp]{stats_str}[/size][/color]"
+                    else:
+                        description = stats_str
                     
                     tours.append({
                         'id': subdir.name,
