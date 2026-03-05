@@ -119,6 +119,7 @@ KV = '''
         BoxLayout:
             size_hint_y: 0.10
             padding: [15, 10]
+            spacing: 15
             canvas.before:
                 Color:
                     rgba: 0.15, 0.15, 0.2, 1
