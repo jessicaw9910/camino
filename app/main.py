@@ -81,6 +81,19 @@ LabelBase.register(
 KV = '''
 #:import MapView kivy_garden.mapview.MapView
 
+# ── Global button style ────────────────────────────────────────────────────
+# Kivy's default background_normal texture tints and muddies background_color.
+# Clearing it lets background_color render as a true solid/flat color.
+<Button>:
+    background_normal: ''
+    background_down: ''
+    background_color: (0.28, 0.28, 0.38, 1)
+
+<ToggleButton>:
+    background_normal: ''
+    background_down: ''
+# ──────────────────────────────────────────────────────────────────────────
+
 <TourCard>:
     orientation: 'vertical'
     size_hint_y: None
@@ -89,11 +102,11 @@ KV = '''
     spacing: 5
     canvas.before:
         Color:
-            rgba: 0.2, 0.2, 0.25, 1
+            rgba: 0.16, 0.16, 0.22, 1
         RoundedRectangle:
             pos: self.pos
             size: self.size
-            radius: [10,]
+            radius: [12,]
     
     AsyncImage:
         source: root.cover_image
@@ -188,14 +201,15 @@ KV = '''
                 spacing: 10
                 canvas.before:
                     Color:
-                        rgba: 0.2, 0.2, 0.3, 1
+                        rgba: 0.14, 0.16, 0.30, 1
                     Rectangle:
                         pos: self.pos
                         size: self.size
-                
+
                 Button:
                     text: '< Tours'
                     size_hint_x: 0.2
+                    background_color: (0.22, 0.22, 0.32, 1)
                     on_release: root.go_back()
                 
                 Label:
@@ -210,11 +224,12 @@ KV = '''
                     text: 'GPS: OFF' if self.state == 'normal' else 'GPS: ON'
                     size_hint_x: 0.22
                     on_state: root.toggle_gps(self.state)
-                    background_color: (0.2, 0.6, 0.2, 1) if self.state == 'down' else (0.5, 0.2, 0.2, 1)
+                    background_color: (0.22, 0.62, 0.28, 1) if self.state == 'down' else (0.58, 0.20, 0.20, 1)
                 
                 Button:
                     text: 'List'
                     size_hint_x: 0.23
+                    background_color: (0.22, 0.22, 0.32, 1)
                     on_release: root.show_poi_list()
             
             BoxLayout:
@@ -258,11 +273,16 @@ KV = '''
                 spacing: 6
                 canvas.before:
                     Color:
-                        rgba: 0.15, 0.15, 0.2, 1
+                        rgba: 0.11, 0.11, 0.16, 1
                     Rectangle:
                         pos: self.pos
                         size: self.size
-                
+                    Color:
+                        rgba: 0.70, 0.38, 0.12, 1
+                    Line:
+                        points: self.x, self.top, self.right, self.top
+                        width: 1.5
+
                 BoxLayout:
                     orientation: 'vertical'
                     size_hint_x: 0.55
@@ -313,6 +333,7 @@ KV = '''
                         text: '▶'
                         font_size: '18sp'
                         font_name: 'SymbolFont'
+                        background_color: (0.70, 0.38, 0.12, 1)
                         on_release: root.toggle_playback()
                         disabled: True
 
@@ -330,6 +351,7 @@ KV = '''
                         font_name: 'SymbolFont'
                         font_size: '12sp'
                         state: 'normal'
+                        background_color: (0.50, 0.28, 0.10, 1) if self.state == 'down' else (0.28, 0.28, 0.38, 1)
                         on_state: root.toggle_text_panel(self.state)
                         disabled: True
             
@@ -338,11 +360,11 @@ KV = '''
                 padding: [10, 4]
                 canvas.before:
                     Color:
-                        rgba: 0.1, 0.1, 0.15, 1
+                        rgba: 0.09, 0.09, 0.13, 1
                     Rectangle:
                         pos: self.pos
                         size: self.size
-                
+
                 Label:
                     text: 'Trigger radius:'
                     size_hint_x: 0.3
@@ -1194,7 +1216,7 @@ class TourScreen(Screen):
         
         length = self.audio_length
         
-        print(f"[PROGRESS] pos={pos:.2f}, length={length:.2f}")
+        # print(f"[PROGRESS] pos={pos:.2f}, length={length:.2f}")
         
         if length > 0:
             self.ids.progress_slider.max = length

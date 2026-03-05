@@ -67,7 +67,7 @@ android.sdk = 33
 #p4a.branch = master
 
 # (str) OUYA Console category. Should be one of GAME or APP
-#android.ouya.category = GAME
+#android.ouya.category = APP
 
 # (str) Filename of OUYA Console icon. It must be a 732x412 png image.
 #android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
