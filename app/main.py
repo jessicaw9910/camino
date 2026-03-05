@@ -306,7 +306,7 @@ KV = '''
                     
                     Button:
                         id: stop_btn
-                        text: '⏹'
+                        text: '■'
                         font_size: '18sp'
                         on_release: root.stop_audio()
                         disabled: True
@@ -1097,7 +1097,7 @@ class TourScreen(Screen):
             print(f"[RESUME] Resuming from: {self.seek_offset:.2f}")
             pygame.mixer.music.unpause()
             self.is_paused = False
-            self.ids.play_btn.text = '⏸'
+            self.ids.play_btn.text = '❚❚'
             self._start_progress_update()
         else:
             self.play_audio()
@@ -1141,7 +1141,7 @@ class TourScreen(Screen):
             self.audio_length = 0
         
         pygame.mixer.music.play()
-        self.ids.play_btn.text = '⏸'
+        self.ids.play_btn.text = '❚❚'
         self.ids.current_poi_label.text = f"Playing: [b]{self.current_poi['num']}: {self.current_poi['name']}[/b]"
         
         # Set duration
