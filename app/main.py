@@ -228,7 +228,7 @@ KV = '''
                 
                 ToggleButton:
                     id: gps_toggle
-                    text: 'GPS: OFF' if self.state == 'normal' else 'GPS: ON'
+                    text: 'GPS OFF' if self.state == 'normal' else ('GPS FIX' if root.gps_has_fix else 'GPS...')
                     size_hint_x: 0.22
                     on_state: root.toggle_gps(self.state)
                     background_color: (0.22, 0.62, 0.28, 1) if self.state == 'down' else (0.58, 0.20, 0.20, 1)
@@ -755,9 +755,9 @@ class MapViewWidget(BoxLayout):
             label = Label(
                 text=f"{poi['num']}: {poi['name']}",
                 size_hint=(None, None),
-                size=(300, 60),
-                font_size='12sp',
-                text_size=(290, None),
+                size=(440, 90),
+                font_size='16sp',
+                text_size=(420, None),
                 halign='center',
                 valign='middle',
                 color=(1, 1, 1, 1)
@@ -891,6 +891,7 @@ class TourScreen(Screen):
     tour_id = StringProperty('')
     current_poi = ObjectProperty(None, allownone=True)
     gps_enabled = BooleanProperty(False)
+    gps_has_fix = BooleanProperty(False)
     trigger_radius = NumericProperty(150)
     user_lat = NumericProperty(0)
     user_lon = NumericProperty(0)
@@ -1389,6 +1390,7 @@ class TourScreen(Screen):
     def stop_gps(self):
         """Stop GPS tracking."""
         self.gps_enabled = False
+        self.gps_has_fix = False
         Clock.unschedule(self.simulate_gps)
         
         if GPS_AVAILABLE:
@@ -1416,15 +1418,18 @@ class TourScreen(Screen):
         
         self.user_lat = lat
         self.user_lon = lon
-        
+        self.gps_has_fix = True
+
         self.ids.map_widget.update_user_location(lat, lon)
         self.check_poi_proximity()
-        
-        # Update current POI label with distance if a POI is selected
+
+        # Update current POI label with distance if a POI is selected, else show coordinates
         is_playing = pygame.mixer.music.get_busy() if USE_PYGAME else (self.sound and self.sound.isPlaying())
         if self.current_poi and not is_playing:
             distance = haversine_distance(lat, lon, self.current_poi['lat'], self.current_poi['lon'])
             self.ids.current_poi_label.text = f"[b]{self.current_poi['num']}: {self.current_poi['name']}[/b] ({distance:.0f}m)"
+        elif not self.current_poi:
+            self.ids.current_poi_label.text = f"GPS: {lat:.5f}, {lon:.5f}"
     
     def on_gps_status(self, status, **kwargs):
         """Handle GPS status changes."""
