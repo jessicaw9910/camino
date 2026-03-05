@@ -13,10 +13,14 @@ camino/
 │       └── cover.jpg          # Tour cover image for selection screen
 ├── src/
 │   ├── generate_audio.py      # TTS audio generation CLI
-│   └── create_cover.py        # Placeholder cover image generator
+│   ├── create_cover.py        # Placeholder cover image generator
+│   └── create_icon.py         # App icon generator
 ├── app/
-│   ├── main.py                # Kivy application
-│   └── buildozer.spec         # Android build configuration
+│   └── main.py                # Kivy application
+├── main.py                    # Entry point for Buildozer/Android
+├── buildozer.spec             # Android build configuration
+├── prepare_audio.sh           # Copy audio files for APK bundling
+├── icon.png                   # App icon (512x512)
 ├── requirements.txt
 └── README.md
 ```
@@ -87,9 +91,12 @@ The app will:
 ### 4. Build Android APK
 
 ```bash
-cd app
+# Copy audio files into app directory for bundling
+./prepare_audio.sh
+
+# Build the APK (from project root)
 buildozer android debug
-# Output: app/bin/*.apk
+# Output: bin/*.apk
 ```
 
 ## App Features
@@ -143,6 +150,13 @@ buildozer android debug
 4. Add a cover image (optional):
    - Place `cover.jpg` in `data/my_road_trip/`
    - Or run `python src/create_cover.py` to generate placeholder
+
+### Generate App Icon (Optional)
+
+```bash
+python src/create_icon.py
+# Creates icon.png (512x512) with road/GPS marker design
+```
 
 ## Technical Notes
 
