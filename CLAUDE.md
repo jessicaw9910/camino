@@ -31,6 +31,15 @@ python src/create_cover.py
 
 # Build Android APK (from project root, not app/)
 cd app && buildozer android debug
+
+# Bootstrap a new tour: fetch KML from Google My Maps + cover image + write tour.json
+python src/fetch_resources.py <tour_name>             # reads data/<tour>/input.json
+python src/fetch_resources.py <tour_name> --force     # re-fetch even if files already exist
+
+# Analyze a Google My Maps KML export against existing scripts (see Google Maps section below)
+python src/analyze_map.py rio_grande_rift
+python src/analyze_map.py rio_grande_rift --threshold 8 --gaps-only
+python src/analyze_map.py rio_grande_rift --stubs     # writes data/rio_grande_rift/candidates.json
 ```
 
 ## Architecture
@@ -42,6 +51,7 @@ Tours live in `data/<tour_name>/`. Each tour needs:
 - `audio/manifest.json` — generated alongside MP3s; used as fallback if `scripts.json` is absent
 - `cover.jpg` — optional tour card image
 - `tour.json` — optional metadata (`name`, `description`)
+- `map.kml` — optional Google My Maps export; used by `src/analyze_map.py` for gap analysis
 
 The app discovers tours at runtime by scanning `data/` for subdirectories containing `scripts.json`.
 
@@ -66,3 +76,316 @@ Async script using `edge-tts`. Strips `[1]`, `[2]` citation markers before synth
 
 ### Platform Differences
 `get_data_dir()` in `app/main.py` searches multiple paths in order — Android app storage, Android external storage, then relative paths. GPS and Android permissions are requested at runtime only on `android`/`ios` platforms.
+
+# Audio Tour Script Generation
+
+Instructions for generating GPS-triggered audio tour scripts for the Paseo app.
+The canonical data file is `scripts.json`. All new scripts should be added to it.
+
+---
+
+## The JSON Schema
+
+Every POI is a single object. All fields are required.
+
+```json
+{
+  "num": 12,
+  "name": "Old Mesilla Plaza",
+  "leg": "El Paso to Albuquerque",
+  "duration": "3:30",
+  "words": 420,
+  "lat": 32.2722,
+  "lon": -106.8003,
+  "cited": true,
+  "body": [
+    "First paragraph with an inline citation. [1]",
+    "Second paragraph. This one references two sources. [2] [3]",
+    "Closing paragraph with no citation needed."
+  ],
+  "sources": [
+    { "n": 1, "text": "Source label — Publisher", "url": "https://example.com" },
+    { "n": 2, "text": "Second source — Publisher", "url": "https://example.com" },
+    { "n": 3, "text": "Third source — Publisher", "url": "https://example.com" }
+  ]
+}
+```
+
+**Field notes:**
+- `num` — integer, sequential along the route (no letter suffixes like 8b)
+- `leg` — one of the standard legs listed below
+- `duration` — string in `"M:SS"` format, estimated at 150 words/minute
+- `words` — integer word count of the body text (excluding sources)
+- `lat` / `lon` — decimal degrees; point to the GPS trigger location (roadside viewpoint or pull-off, not the entrance to a site)
+- `cited` — always `true` for completed scripts
+- `body` — array of paragraph strings; citation markers `[n]` are inline
+- `sources` — array ordered by `n`; `n` must match markers in body
+
+### Standard Leg Names
+
+```
+El Paso
+El Paso to Albuquerque
+Albuquerque Area
+Albuquerque to Santa Fe
+Santa Fe Area
+Santa Fe to Taos
+Taos Area
+Taos to Santa Fe
+Return: Albuquerque Loop
+```
+
+---
+
+## Selecting POIs
+
+### Criteria for inclusion
+- The site is visible from or directly accessible from the road (drive-by value matters)
+- There is a compelling story worth 2–7 minutes of narration
+- The site adds variety — alternate between geology, history, Indigenous history, art, science, and culture
+- Spacing: aim for at least one POI every 20–30 miles of driving; no more than one every 5 miles unless the density is genuinely warranted
+
+### Criteria for skipping
+- Generic highway scenery with no specific story
+- Sites that require significant detour with no drive-by value
+- Duplicates of a theme already covered nearby
+
+### GPS trigger placement
+- Place `lat`/`lon` at the point where a driver first has a clear view or reasonable pull-off, typically 0.5–1 mile before the site
+- For highway drive-bys (no stop needed), place the trigger early enough for the narration to finish before the site is passed
+- Flag any POI whose geographic context puts it well off the main route (e.g., Bosque Redondo is ~150 miles east of I-25) — these may need manual trigger logic in the app rather than GPS proximity
+
+---
+
+## Script Style
+
+### Voice and tone
+- Second person, present tense: *"You're crossing…"*, *"The mesa ahead…"*
+- Conversational but substantive — write as though a well-read, curious friend is in the passenger seat, not a docent reading from a placard
+- No filler phrases: never open with "Welcome to…" or "This is…"
+- Specific over general: name the year, the person, the measurement, the species
+- Complexity earns its place: dense historical or scientific content is fine if it's genuinely interesting; cut anything that wouldn't hold attention at highway speed
+
+### Structure
+- **Opening sentence**: establish place and physical presence immediately — what the driver sees, where they are in the landscape
+- **Middle paragraphs**: the story — historical, geological, cultural, or scientific; each paragraph one idea
+- **Closing**: land on something resonant — a lingering thought, a detail that reframes what came before, an invitation to look more closely. Never a summary.
+
+### What to avoid
+- Lists of facts without narrative thread
+- Over-qualifying ("some historians believe," "it is thought that") — commit to the story
+- Tourism language ("a must-see," "stunning views")
+- Moral editorializing — present difficult history plainly; let the facts carry the weight
+
+---
+
+## Duration and Length
+
+| Duration | Word count | Use for |
+|----------|-----------|---------|
+| ~2:00    | ~300      | Simple drive-bys, single-idea sites |
+| ~3:00    | ~450      | Standard POI |
+| ~4:00    | ~600      | Richer sites with 2–3 ideas |
+| ~5:00    | ~750      | Complex history or science |
+| ~6:00+   | ~900+     | Major sites only (Los Alamos, Acoma, Pueblo Revolt) |
+
+Estimate: **150 words per minute** of narration at a natural pace.
+
+Calculate `duration` as `"M:SS"` — e.g., 450 words = 3:00, 560 words = 3:44 → round to nearest `":00"` or `":30"`.
+
+---
+
+## Citation Rules
+
+**Citations are added while writing — not in a separate pass.**
+
+### When to cite
+- Any specific date, statistic, measurement, or named event
+- Any claim that a reader could reasonably dispute or want to verify
+- First mention of any named law, treaty, or official program
+- Scientific or geological claims (ages, rates, species designations)
+
+### When not to cite
+- General historical narrative that is common knowledge
+- Physical descriptions of the landscape
+- Closing reflective paragraphs
+
+### Citation format
+- Inline `[n]` marker placed at the end of the sentence (before the period if mid-paragraph; after if end of paragraph): `"The dam was completed in 1916. [1]"`
+- Number citations sequentially from `[1]` within each POI — reset to `[1]` for each new POI
+- 3–5 sources per POI is typical; major POIs (Los Alamos, Acoma) may have 6–10
+
+### Source quality hierarchy
+1. Official government sources: NPS, USGS, BLM, Army Corps, DOE, state historic preservation offices
+2. Tribal official sites for Indigenous history
+3. University press or peer-reviewed publications
+4. Wikipedia (acceptable for dates and basic facts; prefer primary source when available)
+5. Regional historical societies, museums, official tourism bodies
+
+### Source label format
+```
+"text": "Descriptive title — Publisher name"
+```
+Examples:
+- `"Trinity test, July 16, 1945 — NPS Manhattan Project"`
+- `"Pueblo Revolt of 1680 — Wikipedia"`
+- `"Acoma Pueblo: antiquity and occupation — Britannica"`
+
+---
+
+## Generating Scripts — Workflow
+
+### Single POI
+1. Research the site: verify key dates, figures, and facts before writing
+2. Write all body paragraphs with inline `[n]` markers as you go
+3. Build the `sources` array immediately after finishing the body
+4. Count words, calculate duration
+5. Assemble the full JSON object
+6. Insert into `script.json` in route order (sorted by `num`)
+7. Save
+
+### Batch of POIs (recommended approach for new route segments)
+Work in batches of 4–6 POIs to balance efficiency against context window limits.
+
+**Save after every POI is complete** — do not draft multiple POIs and add sources later. If the session ends mid-batch, completed POIs are preserved.
+
+Suggested batch loop:
+```
+For each POI in batch:
+  1. Research (web search if needed)
+  2. Write body with inline citations
+  3. Add sources array
+  4. Append completed object to a working batch JSON file (e.g., batch_XX.json)
+  5. Confirm save before moving to next POI
+```
+
+After all POIs in the batch are complete:
+- Merge batch file into `scripts.json`
+- Verify sequential numbering
+- Verify all `[n]` markers have a matching entry in `sources`
+
+### Avoiding context window / session limits
+- Keep batch size to 4–6 POIs per session
+- After completing each POI object, write it to disk immediately — treat the file as the source of truth, not the conversation
+- If the session is getting long, finish the current POI completely (body + sources + full JSON), save, then start a new session for the next batch
+- At the start of each new session, load `scripts.json` and confirm the last saved POI before continuing
+- Never hold more than one in-progress POI in memory at once
+
+---
+
+## Rebuilding the Word Document
+
+`build_master_v4.js` reads `scripts.json` and generates `NM_Complete_Scripts_v4.docx`.
+
+```bash
+node build_master_v4.js
+```
+
+Run this after any batch is merged. The script:
+- Groups POIs by `leg`
+- Renders inline citation markers as teal superscript hyperlinks
+- Renders the `sources` block as a numbered list with teal hyperlinks
+- Includes `lat`/`lon` in the per-POI metadata line
+- Adds page numbers and headers/footers
+
+---
+
+## Stripping Citations for TTS / App Narration
+
+Before sending body text to a TTS engine or displaying in the app, strip citation markers:
+
+```javascript
+const clean = paragraph.replace(/\s*\[\d+\]/g, '');
+```
+
+The `sources` array is reference material only — it does not appear in the audio narration.
+
+---
+
+## Quality Checklist Before Merging
+
+- [ ] `num` is correct integer, in sequence
+- [ ] `lat`/`lon` are at the road-level trigger point, not the site entrance
+- [ ] `duration` matches word count at 150 wpm
+- [ ] Every `[n]` in `body` has a matching `{ "n": n, ... }` in `sources`
+- [ ] No source uses `"num"` as key — must be `"n"`
+- [ ] `cited` is `true`
+- [ ] Body closes on something resonant, not a summary
+- [ ] No tourism language or filler phrases
+
+---
+
+## Google My Maps Integration
+
+### Storing the source map
+
+For each tour, store the Google My Maps export at `data/<tour_name>/map.kml`. This is the canonical itinerary source — it drives gap analysis and can be re-exported whenever the map is updated.
+
+**To export from Google My Maps:**
+1. Open the map in a browser
+2. Click the ⋮ menu next to the map title → "Export to KML/KMZ"
+3. Select **"Export as .KML file"** (not KMZ — plain KML is human-readable)
+4. Save as `data/<tour_name>/map.kml`
+
+The KML structure mirrors the map's layer organization: each layer becomes a "leg" in the gap report, and each marker becomes a candidate POI.
+
+### Creating a new tour from a Google My Maps
+
+```bash
+# 1. Create data/my_new_tour/input.json with your map URL (see schema below)
+#    (Running fetch_resources once with no input.json creates a template automatically)
+python src/fetch_resources.py my_new_tour
+
+# 2. Edit input.json: fill in name, description, url_map, url_cover (optional)
+
+# 3. Fetch all resources: KML, cover image, tour.json
+python src/fetch_resources.py my_new_tour
+#    → data/my_new_tour/map.kml       (fetched from Google My Maps)
+#    → data/my_new_tour/cover.jpg     (fetched from url_cover, or generated placeholder)
+#    → data/my_new_tour/tour.json     (written from name + description)
+
+# 4. Run gap analysis — see which map markers lack scripts
+python src/analyze_map.py my_new_tour
+
+# 5. Generate stub POI entries for gaps
+python src/analyze_map.py my_new_tour --stubs
+#    → data/my_new_tour/candidates.json
+
+# 6. Write scripts for each stub (follow CLAUDE.md style guide below)
+#    Then merge completed POIs into data/my_new_tour/scripts.json in route order
+
+# 7. Generate audio
+python src/generate_audio.py my_new_tour
+```
+
+### input.json schema
+
+```json
+{
+  "name":        "Display name shown on the tour card",
+  "description": "One-sentence description of the tour",
+  "url_map":     "https://www.google.com/maps/d/u/0/view?mid=YOUR_MAP_ID",
+  "url_cover":   "https://example.com/image.jpg"
+}
+```
+
+- `url_map` — any Google My Maps share URL containing a `mid=` parameter; the script derives the KML export URL automatically. The map must be publicly shared ("Anyone with the link can view").
+- `url_cover` — any publicly accessible image URL; converted to JPEG automatically. If `null` or omitted, `create_cover.py` generates a desert-gradient placeholder.
+
+### Ongoing gap analysis for existing tours
+
+As you extend or revise a tour's Google My Maps, re-export `map.kml` and re-run the analyzer to surface new markers that lack scripts:
+
+```bash
+python src/analyze_map.py rio_grande_rift --gaps-only
+```
+
+The `--threshold` flag (default 5 km) controls what counts as "covered". Increase it for drive-by sites with imprecise trigger points; decrease it for dense urban areas where distinct sites are close together.
+
+### candidates.json format
+
+Stubs written by `--stubs` follow the `scripts.json` schema with two extra fields:
+- `"_map_description"` — the description text from the Google My Maps marker (if any)
+- `"_status"` — always `"STUB — research needed; replace body + sources before merging"`
+
+Remove both underscore fields before merging into `scripts.json`.
