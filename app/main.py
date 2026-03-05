@@ -189,7 +189,7 @@ KV = '''
             
             BoxLayout:
                 id: map_container
-                size_hint_y: 0.69
+                size_hint_y: 0.73
                 
                 MapViewWidget:
                     id: map_widget
@@ -223,9 +223,9 @@ KV = '''
             
             BoxLayout:
                 id: info_panel
-                size_hint_y: 0.18
-                padding: 10
-                spacing: 10
+                size_hint_y: 0.14
+                padding: 8
+                spacing: 8
                 canvas.before:
                     Color:
                         rgba: 0.15, 0.15, 0.2, 1
@@ -333,8 +333,8 @@ KV = '''
         # Text panel overlay (slides up above bottom controls)
         ScrollView:
             id: text_panel
-            pos_hint: {'x': 0, 'y': -0.46}
-            size_hint: 1, 0.46
+            pos_hint: {'x': 0, 'y': -0.35}
+            size_hint: 1, 0.35
             opacity: 0
             disabled: True
             canvas.before:
@@ -868,7 +868,7 @@ class TourScreen(Screen):
         self.ids.time_label.text = '0:00'
         self.ids.duration_label.text = '0:00'
         # Hide text panel off-screen
-        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.46}
+        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.35}
         self.ids.text_panel.opacity = 0
         self.ids.text_panel.disabled = True
         self.ids.text_toggle.state = 'normal'
@@ -909,7 +909,7 @@ class TourScreen(Screen):
         self.ids.time_label.text = '0:00'
         self.ids.duration_label.text = '0:00'
         # Hide text panel (slide off-screen)
-        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.46}
+        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.35}
         self.ids.text_panel.opacity = 0
         self.ids.text_panel.disabled = True
         self.ids.poi_text_label.text = ''
@@ -1001,14 +1001,14 @@ class TourScreen(Screen):
         Animation.cancel_all(panel)
         
         if state == 'down':
-            # Slide up to sit above bottom controls (23% from bottom)
+            # Slide up to sit above bottom controls (19% from bottom)
             panel.disabled = False
-            anim = Animation(pos_hint={'x': 0, 'y': 0.23}, opacity=1, duration=0.25, t='out_cubic')
+            anim = Animation(pos_hint={'x': 0, 'y': 0.19}, opacity=1, duration=0.25, t='out_cubic')
             anim.start(panel)
             self.ids.text_toggle.text = 'Hide Text'
         else:
             # Slide down off screen
-            anim = Animation(pos_hint={'x': 0, 'y': -0.46}, opacity=0, duration=0.2, t='in_cubic')
+            anim = Animation(pos_hint={'x': 0, 'y': -0.35}, opacity=0, duration=0.2, t='in_cubic')
             anim.bind(on_complete=lambda *_: setattr(panel, 'disabled', True))
             anim.start(panel)
             self.ids.text_toggle.text = 'Show Text'
@@ -1158,7 +1158,7 @@ class TourScreen(Screen):
         self.ids.time_label.text = '0:00'
         self.ids.duration_label.text = '0:00'
         # Hide text panel (slide off-screen)
-        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.46}
+        self.ids.text_panel.pos_hint = {'x': 0, 'y': -0.35}
         self.ids.text_panel.opacity = 0
         self.ids.text_panel.disabled = True
         self.ids.poi_text_label.text = ''
