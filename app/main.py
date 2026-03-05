@@ -16,6 +16,7 @@ Requirements:
 """
 
 import json
+import os
 import re
 import webbrowser
 from pathlib import Path
@@ -65,6 +66,15 @@ except ImportError:
     print("MapView not available - install with: pip install kivy-garden.mapview")
 
 from kivy.lang import Builder
+from kivy.core.text import LabelBase
+from kivy import kivy_data_dir
+
+# Register DejaVuSans (bundled with Kivy) so buttons can render Unicode symbols
+# that Kivy's default Roboto font does not cover: ▶ ■ ▼ ▲ ❚
+LabelBase.register(
+    name='SymbolFont',
+    fn_regular=os.path.join(kivy_data_dir, 'fonts', 'DejaVuSans.ttf')
+)
 
 # KV Language UI Definition
 KV = '''
@@ -301,19 +311,22 @@ KV = '''
                         id: play_btn
                         text: '▶'
                         font_size: '18sp'
+                        font_name: 'SymbolFont'
                         on_release: root.toggle_playback()
                         disabled: True
-                    
+
                     Button:
                         id: stop_btn
                         text: '■'
                         font_size: '18sp'
+                        font_name: 'SymbolFont'
                         on_release: root.stop_audio()
                         disabled: True
-                    
+
                     ToggleButton:
                         id: text_toggle
                         text: '▼ Text'
+                        font_name: 'SymbolFont'
                         font_size: '12sp'
                         state: 'normal'
                         on_state: root.toggle_text_panel(self.state)
