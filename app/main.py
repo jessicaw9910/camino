@@ -245,33 +245,6 @@ KV = '''
                 
                 MapViewWidget:
                     id: map_widget
-                
-                BoxLayout:
-                    orientation: 'vertical'
-                    size_hint_x: None
-                    width: 50
-                    padding: 5
-                    spacing: 5
-                    
-                    Widget:
-                        size_hint_y: 0.5
-                    
-                    Button:
-                        text: '+'
-                        font_size: '20sp'
-                        size_hint_y: None
-                        height: 45
-                        on_release: root.ids.map_widget.zoom_in()
-                    
-                    Button:
-                        text: '-'
-                        font_size: '20sp'
-                        size_hint_y: None
-                        height: 45
-                        on_release: root.ids.map_widget.zoom_out()
-                    
-                    Widget:
-                        size_hint_y: 0.5
             
             BoxLayout:
                 id: info_panel
@@ -288,11 +261,11 @@ KV = '''
                         rgba: 0.70, 0.38, 0.12, 1
                     Line:
                         points: self.x, self.top, self.right, self.top
-                        width: 1.5
+                        width: 3
 
                 BoxLayout:
                     orientation: 'vertical'
-                    size_hint_x: 0.55
+                    size_hint_x: 0.67
                     spacing: 5
                     
                     Label:
@@ -332,33 +305,33 @@ KV = '''
                             font_size: '11sp'
                 
                 BoxLayout:
-                    size_hint_x: 0.40
+                    size_hint_x: 0.28
                     spacing: 5
-                    
-                    Button:
+
+                    RoundIconButton:
                         id: play_btn
                         text: '▶'
                         font_size: '18sp'
                         font_name: 'SymbolFont'
-                        background_color: (0.70, 0.38, 0.12, 1)
+                        btn_color: (0.70, 0.38, 0.12, 1)
                         on_release: root.toggle_playback()
                         disabled: True
 
-                    Button:
+                    RoundIconButton:
                         id: stop_btn
                         text: '■'
                         font_size: '18sp'
                         font_name: 'SymbolFont'
+                        btn_color: (0.32, 0.32, 0.42, 1)
                         on_release: root.stop_audio()
                         disabled: True
 
-                    ToggleButton:
+                    RoundIconToggleButton:
                         id: text_toggle
-                        text: '▼ Text'
+                        text: '▼'
                         font_name: 'SymbolFont'
-                        font_size: '12sp'
+                        font_size: '16sp'
                         state: 'normal'
-                        background_color: (0.50, 0.28, 0.10, 1) if self.state == 'down' else (0.28, 0.28, 0.38, 1)
                         on_state: root.toggle_text_panel(self.state)
                         disabled: True
             
@@ -649,6 +622,63 @@ class TourSelectScreen(Screen):
             app.open_tour(tour)
 
 
+class RoundIconButton(Button):
+    """Round icon button for playback controls."""
+    btn_color = ListProperty([0.3, 0.3, 0.4, 1])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_color = [0, 0, 0, 0]
+        self.background_normal = ''
+        self.background_down = ''
+        self.bind(pos=self._redraw, size=self._redraw,
+                  btn_color=self._redraw, state=self._redraw,
+                  disabled=self._redraw)
+        Clock.schedule_once(lambda dt: self._redraw())
+
+    def _redraw(self, *args):
+        from kivy.graphics import Color, RoundedRectangle
+        self.canvas.before.clear()
+        with self.canvas.before:
+            if self.disabled:
+                Color(0.25, 0.25, 0.30, 0.5)
+            elif self.state == 'down':
+                Color(*[c * 0.65 for c in self.btn_color[:3]], self.btn_color[3])
+            else:
+                Color(*self.btn_color)
+            r = min(self.width, self.height) / 2
+            RoundedRectangle(pos=self.pos, size=self.size, radius=[r])
+
+
+class RoundIconToggleButton(ToggleButton):
+    """Round icon toggle button for playback controls."""
+    btn_color = ListProperty([0.28, 0.28, 0.38, 1])
+    btn_color_active = ListProperty([0.50, 0.28, 0.10, 1])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_color = [0, 0, 0, 0]
+        self.background_normal = ''
+        self.background_down = ''
+        self.bind(pos=self._redraw, size=self._redraw,
+                  btn_color=self._redraw, btn_color_active=self._redraw,
+                  state=self._redraw, disabled=self._redraw)
+        Clock.schedule_once(lambda dt: self._redraw())
+
+    def _redraw(self, *args):
+        from kivy.graphics import Color, RoundedRectangle
+        self.canvas.before.clear()
+        with self.canvas.before:
+            if self.disabled:
+                Color(0.25, 0.25, 0.30, 0.5)
+            elif self.state == 'down':
+                Color(*self.btn_color_active)
+            else:
+                Color(*self.btn_color)
+            r = min(self.width, self.height) / 2
+            RoundedRectangle(pos=self.pos, size=self.size, radius=[r])
+
+
 class UserLocationMarker(MapMarker):
     """Custom marker for user's GPS location - blue circle with white border."""
     
@@ -656,26 +686,26 @@ class UserLocationMarker(MapMarker):
         # Use an empty/transparent source so we can draw custom graphics
         kwargs['source'] = ''
         super().__init__(**kwargs)
-        self.size = (24, 24)
+        self.size = (64, 64)
         self.anchor_x = 0.5
         self.anchor_y = 0.5
         self._draw_marker()
         self.bind(pos=self._draw_marker, size=self._draw_marker)
-    
+
     def _draw_marker(self, *args):
-        """Draw a blue circle with white border."""
-        from kivy.graphics import Color, Ellipse, Line
+        """Draw a large blue circle with white border and accuracy ring."""
+        from kivy.graphics import Color, Ellipse
         self.canvas.clear()
         with self.canvas:
             # White outer ring
             Color(1, 1, 1, 1)
-            Ellipse(pos=(self.x + 2, self.y + 2), size=(20, 20))
+            Ellipse(pos=(self.x + 2, self.y + 2), size=(60, 60))
             # Blue fill
-            Color(0.2, 0.5, 1, 1)  # Bright blue
-            Ellipse(pos=(self.x + 4, self.y + 4), size=(16, 16))
+            Color(0.2, 0.5, 1, 1)
+            Ellipse(pos=(self.x + 6, self.y + 6), size=(52, 52))
             # White center dot
             Color(1, 1, 1, 1)
-            Ellipse(pos=(self.x + 9, self.y + 9), size=(6, 6))
+            Ellipse(pos=(self.x + 24, self.y + 24), size=(16, 16))
 
 
 class MapViewWidget(BoxLayout):
@@ -755,7 +785,7 @@ class MapViewWidget(BoxLayout):
             label = Label(
                 text=f"{poi['num']}: {poi['name']}",
                 size_hint=(None, None),
-                size=(440, 90),
+                size=(440, 180),
                 font_size='16sp',
                 text_size=(420, None),
                 halign='center',
@@ -1125,13 +1155,13 @@ class TourScreen(Screen):
             panel.disabled = False
             anim = Animation(pos_hint={'x': 0, 'y': 0.19}, opacity=1, duration=0.25, t='out_cubic')
             anim.start(panel)
-            self.ids.text_toggle.text = '▲ Text'
+            self.ids.text_toggle.text = '▲'
         else:
             # Slide down off screen
             anim = Animation(pos_hint={'x': 0, 'y': -0.35}, opacity=0, duration=0.2, t='in_cubic')
             anim.bind(on_complete=lambda *_: setattr(panel, 'disabled', True))
             anim.start(panel)
-            self.ids.text_toggle.text = '▼ Text'
+            self.ids.text_toggle.text = '▼'
     
     def on_citation_click(self, instance, ref):
         """Handle citation link clicks."""
