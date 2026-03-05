@@ -132,6 +132,7 @@ KV = '''
                 source: root.get_icon_path()
                 size_hint: None, None
                 size: 50, 50
+                pos_hint: {'center_y': 0.5}
                 allow_stretch: True
                 keep_ratio: True
             
@@ -141,6 +142,7 @@ KV = '''
                 bold: True
                 size_hint_x: None
                 width: self.texture_size[0]
+                pos_hint: {'center_y': 0.5}
             
             Widget:
         
