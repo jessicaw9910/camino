@@ -116,7 +116,7 @@ KV = '''
 <TourCard>:
     orientation: 'horizontal'
     size_hint_y: None
-    height: 200
+    height: 250
     padding: 0
     spacing: 0
     canvas.before:
