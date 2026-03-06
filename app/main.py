@@ -99,12 +99,24 @@ KV = '''
 <ToggleButton>:
     background_normal: ''
     background_down: ''
+
+<RoundIconButton>:
+    background_color: 0, 0, 0, 0
+    background_normal: ''
+    background_down: ''
+    background_disabled_normal: ''
+
+<RoundIconToggleButton>:
+    background_color: 0, 0, 0, 0
+    background_normal: ''
+    background_down: ''
+    background_disabled_normal: ''
 # ──────────────────────────────────────────────────────────────────────────
 
 <TourCard>:
     orientation: 'horizontal'
     size_hint_y: None
-    height: 120
+    height: 150
     padding: 0
     spacing: 0
     canvas.before:
@@ -233,22 +245,34 @@ KV = '''
                 ToggleButton:
                     id: gps_toggle
                     text: 'GPS OFF' if self.state == 'normal' else ('GPS FIX' if root.gps_has_fix else 'GPS...')
-                    size_hint_x: 0.22
+                    size_hint_x: 0.28
                     on_state: root.toggle_gps(self.state)
                     background_color: (0.22, 0.62, 0.28, 1) if self.state == 'down' else (0.58, 0.20, 0.20, 1)
                 
                 Button:
                     text: 'List'
-                    size_hint_x: 0.23
+                    size_hint_x: 0.17
                     background_color: (0.22, 0.22, 0.32, 1)
                     on_release: root.show_poi_list()
             
-            BoxLayout:
+            FloatLayout:
                 id: map_container
                 size_hint_y: 0.73
-                
+
                 MapViewWidget:
                     id: map_widget
+                    size_hint: 1, 1
+                    pos_hint: {'x': 0, 'y': 0}
+
+                Button:
+                    text: '◎'
+                    font_name: 'SymbolFont'
+                    font_size: '22sp'
+                    size_hint: None, None
+                    size: 48, 48
+                    pos_hint: {'right': 0.98, 'y': 0.03}
+                    background_color: (0.14, 0.16, 0.30, 0.85)
+                    on_release: root.center_on_user()
             
             BoxLayout:
                 id: info_panel
@@ -543,7 +567,7 @@ def discover_tours(data_dir: Path) -> list:
                     stats_str = ' · '.join(desc_parts)
                     tour_desc = config.get('description', '')
                     if tour_desc:
-                        description = f"{tour_desc} [color=aaaaaa][size=11sp]· {stats_str}[/size][/color]"
+                        description = f"{tour_desc}\n[color=aaaaaa][size=11sp]{stats_str}[/size][/color]"
                     else:
                         description = stats_str
                     
@@ -683,32 +707,11 @@ class RoundIconToggleButton(ToggleButton):
 
 
 class UserLocationMarker(MapMarker):
-    """Custom marker for user's GPS location - blue circle with white border."""
-    
-    def __init__(self, **kwargs):
-        # Use an empty/transparent source so we can draw custom graphics
-        kwargs['source'] = ''
-        super().__init__(**kwargs)
-        self.size = (64, 64)
-        self.anchor_x = 0.5
-        self.anchor_y = 0.5
-        self._draw_marker()
-        self.bind(pos=self._draw_marker, size=self._draw_marker)
+    """Marker for user's GPS location — blue-tinted default map pin."""
 
-    def _draw_marker(self, *args):
-        """Draw a large blue circle with white border and accuracy ring."""
-        from kivy.graphics import Color, Ellipse
-        self.canvas.clear()
-        with self.canvas:
-            # White outer ring
-            Color(1, 1, 1, 1)
-            Ellipse(pos=(self.x + 2, self.y + 2), size=(60, 60))
-            # Blue fill
-            Color(0.2, 0.5, 1, 1)
-            Ellipse(pos=(self.x + 6, self.y + 6), size=(52, 52))
-            # White center dot
-            Color(1, 1, 1, 1)
-            Ellipse(pos=(self.x + 24, self.y + 24), size=(16, 16))
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.color = [0.2, 0.5, 1, 1]  # Blue tint over the default marker.png
 
 
 class MapViewWidget(BoxLayout):
@@ -1396,36 +1399,93 @@ class TourScreen(Screen):
     def start_gps(self):
         """Start GPS tracking."""
         if not GPS_AVAILABLE:
-            print("GPS not available - starting simulation")
+            self.ids.current_poi_label.text = "GPS: simulation mode"
             self.gps_enabled = True
             Clock.schedule_interval(self.simulate_gps, 2.0)
             return
-        
+
         if platform == 'android':
-            from android.permissions import request_permissions, Permission
-            request_permissions([
-                Permission.ACCESS_FINE_LOCATION,
-                Permission.ACCESS_COARSE_LOCATION
-            ])
-        
+            from android.permissions import request_permissions, Permission, check_permission
+            has_perm = check_permission(Permission.ACCESS_FINE_LOCATION)
+            self.ids.current_poi_label.text = f"GPS: perm={has_perm}"
+            if not has_perm:
+                request_permissions(
+                    [Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION],
+                    callback=self._on_gps_permissions
+                )
+                return
+        self._start_gps_after_permissions()
+
+    def _on_gps_permissions(self, permissions, grants):
+        """Called after Android permission dialog."""
+        Clock.schedule_once(lambda dt: self._handle_gps_permissions(grants))
+
+    def _handle_gps_permissions(self, grants):
+        if all(grants):
+            self._start_gps_after_permissions()
+        else:
+            self.ids.current_poi_label.text = "GPS: permissions denied"
+            self.ids.gps_toggle.state = 'normal'
+
+    def _start_gps_after_permissions(self):
         try:
+            # Start plyer GPS (registers with LocationManager for updates)
             gps.configure(
                 on_location=self.on_gps_location,
                 on_status=self.on_gps_status
             )
             gps.start(minTime=1000, minDistance=1)
             self.gps_enabled = True
-            print("GPS started")
+            self.ids.current_poi_label.text = "GPS: started, waiting for fix..."
         except Exception as e:
-            print(f"GPS error: {e}")
+            self.ids.current_poi_label.text = f"GPS ERROR: {e}"
             self.gps_enabled = False
-    
+            return
+
+        # On Android, also poll getLastKnownLocation as a reliable fallback
+        # (plyer's Java→Python callback bridge is unreliable on many devices)
+        if platform == 'android':
+            try:
+                from jnius import autoclass
+                Context = autoclass('android.content.Context')
+                PythonActivity = autoclass('org.kivy.android.PythonActivity')
+                self._location_manager = PythonActivity.mActivity.getSystemService(
+                    Context.LOCATION_SERVICE
+                )
+                # Try to get a cached location immediately
+                self._poll_gps_location(0)
+                # Poll every 2 seconds as backup
+                Clock.schedule_interval(self._poll_gps_location, 2.0)
+            except Exception as e:
+                self.ids.current_poi_label.text = f"GPS POLL INIT ERR: {e}"
+
+    def _poll_gps_location(self, dt):
+        """Poll Android LocationManager for last known location (runs on Kivy main thread)."""
+        if not self.gps_enabled or not hasattr(self, '_location_manager'):
+            return False  # unschedule
+        try:
+            best = None
+            for provider in ['gps', 'network', 'passive']:
+                loc = self._location_manager.getLastKnownLocation(provider)
+                if loc and (best is None or loc.getTime() > best.getTime()):
+                    best = loc
+            if best:
+                lat = best.getLatitude()
+                lon = best.getLongitude()
+                # Only update if position actually changed
+                if abs(lat - self.user_lat) > 0.000001 or abs(lon - self.user_lon) > 0.000001:
+                    self._gps_update_count += 1
+                    self._apply_gps_location(lat, lon, self._gps_update_count)
+        except Exception as e:
+            self.ids.current_poi_label.text = f"GPS POLL ERR: {e}"
+
     def stop_gps(self):
         """Stop GPS tracking."""
         self.gps_enabled = False
         self.gps_has_fix = False
         Clock.unschedule(self.simulate_gps)
-        
+        Clock.unschedule(self._poll_gps_location)
+
         if GPS_AVAILABLE:
             try:
                 gps.stop()
@@ -1444,29 +1504,50 @@ class TourScreen(Screen):
         
         self.on_gps_location(lat=self.user_lat, lon=self.user_lon)
     
+    _gps_update_count = 0
+
     def on_gps_location(self, **kwargs):
-        """Handle GPS location update."""
+        """Handle GPS location update (may be called from background thread on Android)."""
+        self._gps_update_count += 1
+        count = self._gps_update_count
         lat = kwargs.get('lat', 0)
         lon = kwargs.get('lon', 0)
-        
-        self.user_lat = lat
-        self.user_lon = lon
-        self.gps_has_fix = True
+        Clock.schedule_once(lambda dt: self._apply_gps_location(lat, lon, count))
 
-        self.ids.map_widget.update_user_location(lat, lon)
-        self.check_poi_proximity()
+    def _apply_gps_location(self, lat, lon, count):
+        try:
+            first_fix = not self.gps_has_fix
+            self.user_lat = lat
+            self.user_lon = lon
+            self.gps_has_fix = True
 
-        # Update current POI label with distance if a POI is selected, else show coordinates
-        is_playing = pygame.mixer.music.get_busy() if USE_PYGAME else (self.sound and self.sound.isPlaying())
-        if self.current_poi and not is_playing:
-            distance = haversine_distance(lat, lon, self.current_poi['lat'], self.current_poi['lon'])
-            self.ids.current_poi_label.text = f"[b]{self.current_poi['num']}: {self.current_poi['name']}[/b] ({distance:.0f}m)"
-        elif not self.current_poi:
-            self.ids.current_poi_label.text = f"GPS: {lat:.5f}, {lon:.5f}"
+            self.ids.map_widget.update_user_location(lat, lon)
+            if first_fix:
+                self.ids.map_widget.map_view.center_on(lat, lon)
+            self.check_poi_proximity()
+
+            # Update current POI label with distance if a POI is selected, else show coordinates
+            if USE_PYGAME:
+                is_playing = pygame.mixer.music.get_busy()
+            else:
+                is_playing = bool(self.sound and self.sound.isPlaying())
+            if self.current_poi and not is_playing:
+                distance = haversine_distance(lat, lon, self.current_poi['lat'], self.current_poi['lon'])
+                self.ids.current_poi_label.text = f"[b]{self.current_poi['num']}: {self.current_poi['name']}[/b] ({distance:.0f}m)"
+            elif not self.current_poi:
+                self.ids.current_poi_label.text = f"GPS #{count}: {lat:.5f}, {lon:.5f}"
+        except Exception as e:
+            self.ids.current_poi_label.text = f"GPS UPDATE ERR: {e}"
     
+    def center_on_user(self):
+        """Pan the map to the user's current GPS location."""
+        if self.user_lat != 0 or self.user_lon != 0:
+            self.ids.map_widget.map_view.center_on(self.user_lat, self.user_lon)
+
     def on_gps_status(self, status, **kwargs):
         """Handle GPS status changes."""
-        print(f"GPS status: {status}")
+        if not self.gps_has_fix:
+            self.ids.current_poi_label.text = f"GPS status: {status}"
     
     def check_poi_proximity(self):
         """Check if user is near any POI and trigger audio."""
