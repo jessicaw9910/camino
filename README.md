@@ -48,63 +48,6 @@ pip install -r requirements.txt
 pip install buildozer
 ```
 
-### 1. Generate Audio Files
-
-The `generate_audio.py` CLI generates MP3 files from POI descriptions using Edge TTS (Microsoft's neural voices).
-
-```bash
-# List available tours
-python src/generate_audio.py --list
-
-# Generate audio for a specific tour
-python src/generate_audio.py rio_grande_rift
-
-# Generate for all tours
-python src/generate_audio.py
-
-# Force regeneration of existing files
-python src/generate_audio.py rio_grande_rift --force
-```
-
-This will:
-- Read `data/<tour>/scripts.json`
-- Strip citation markers `[1]`, `[2]`, etc. from text
-- Generate MP3 files using Edge TTS multilingual neural voice
-- Save audio as `data/<tour>/audio/01.mp3`, `02.mp3`, etc.
-
-### 2. Generate Cover Images (Optional)
-
-If a tour doesn't have a cover image, create a placeholder:
-
-```bash
-python src/create_cover.py
-```
-
-Or add your own `cover.jpg` (recommended 800x600 or similar aspect ratio).
-
-### 3. Run the App (Desktop Testing)
-
-```bash
-python app/main.py
-```
-
-The app will:
-- Show a tour selection screen with all available tours
-- Display a map with POI markers for the selected tour
-- Allow manual playback of any POI audio
-- Simulate GPS on desktop (real GPS on mobile)
-
-### 4. Build Android APK
-
-```bash
-# Copy audio files into app directory for bundling
-./prepare_audio.sh
-
-# Build the APK (from project root)
-buildozer android debug
-# Output: bin/*.apk
-```
-
 ## App Features
 
 ### Tour Selection
@@ -214,11 +157,27 @@ This reads `scripts.json`, strips citation markers, and generates:
 - `data/my_tour/audio/01.mp3`, `02.mp3`, ...
 - `data/my_tour/audio/manifest.json`
 
-### Generate App Icon (Optional)
+### Step 6: Run the App (Desktop Testing)
 
 ```bash
-python src/create_icon.py
-# Creates icon.png (512x512) with road/GPS marker design
+python app/main.py
+```
+
+The app will:
+- Show a tour selection screen with all available tours
+- Display a map with POI markers for the selected tour
+- Allow manual playback of any POI audio
+- Simulate GPS on desktop (real GPS on mobile)
+
+### Step 7: Build Android APK
+
+```bash
+# Copy audio files into app directory for bundling
+./prepare_audio.sh
+
+# Build the APK (from project root)
+buildozer android debug
+# Output: bin/*.apk
 ```
 
 ## Technical Notes
