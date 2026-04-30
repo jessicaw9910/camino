@@ -15,6 +15,9 @@ Camino is a GPS-triggered audio guide app for road trips. It has two components:
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
+# IMPORTANT: If you install any package on the fly (pip install ...),
+# immediately add it to requirements.txt so the venv is reproducible.
+
 # Run desktop app (uses simulated GPS on non-Android)
 python app/main.py
 
@@ -86,7 +89,7 @@ Async script using `edge-tts`. Strips `[1]`, `[2]` citation markers before synth
 
 # Audio Tour Script Generation
 
-Instructions for generating GPS-triggered audio tour scripts for the Paseo app.
+Instructions for generating GPS-triggered audio tour scripts for the Camino app.
 The canonical data file is `scripts.json`. All new scripts should be added to it.
 
 ---
@@ -179,6 +182,7 @@ Return: Albuquerque Loop
 - **Closing**: land on something resonant — a lingering thought, a detail that reframes what came before, an invitation to look more closely. Never a summary.
 
 ### What to avoid
+- **Em-dashes in body text** — TTS engines struggle with em-dash pauses. Use commas, periods, colons, semicolons, or parentheses instead. Paired em-dashes for parenthetical asides should become parentheses. Single em-dashes should become commas (for brief pauses) or periods (for full breaks). Em-dashes in POI names and source labels are fine since those aren't narrated.
 - Lists of facts without narrative thread
 - Over-qualifying ("some historians believe," "it is thought that") — commit to the story
 - Tourism language ("a must-see," "stunning views")
@@ -372,12 +376,16 @@ python src/generate_audio.py my_new_tour
   "name":        "Display name shown on the tour card",
   "description": "One-sentence description of the tour",
   "url_map":     "https://www.google.com/maps/d/u/0/view?mid=YOUR_MAP_ID",
-  "url_cover":   "https://example.com/image.jpg"
+  "url_cover":   "https://example.com/image.jpg",
+  "voice":       "en-US-AndrewMultilingualNeural"
 }
 ```
 
+- `name` — required. Display name shown on the tour card in the app.
+- `description` — required. One-sentence description of the tour.
 - `url_map` — any Google My Maps share URL containing a `mid=` parameter; the script derives the KML export URL automatically. The map must be publicly shared ("Anyone with the link can view").
 - `url_cover` — any publicly accessible image URL; converted to JPEG automatically. If `null` or omitted, `create_cover.py` generates a desert-gradient placeholder.
+- `voice` — Edge TTS voice for audio generation. If omitted, defaults to `en-US-AndrewMultilingualNeural`. The `--voice` CLI flag on `generate_audio.py` overrides this value.
 
 ### Ongoing gap analysis for existing tours
 
