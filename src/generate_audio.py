@@ -50,6 +50,19 @@ def get_data_dir() -> Path:
     return get_project_root() / 'data'
 
 
+def get_tour_voice(tour_path: Path) -> str:
+    """Read the voice from input.json if present, otherwise return DEFAULT_VOICE."""
+    input_file = tour_path / 'input.json'
+    if input_file.exists():
+        try:
+            with open(input_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('voice', DEFAULT_VOICE)
+        except Exception:
+            pass
+    return DEFAULT_VOICE
+
+
 def discover_tours(data_dir: Path) -> list:
     """Discover all available tours in the data directory."""
     tours = []
@@ -131,6 +144,10 @@ async def generate_audio_for_poi(
         return str(output_path)
     except Exception as e:
         print(f"    ✗ Error: {e}")
+        # Remove partial/corrupt file
+        if output_path.exists():
+            output_path.unlink()
+            print(f"    ✗ Removed partial file: {filename}")
         return None
 
 
@@ -160,8 +177,8 @@ def generate_manifest(pois: list, output_dir: Path) -> Path:
 
 
 async def process_tour(
-    tour_path: Path, 
-    voice: str = DEFAULT_VOICE,
+    tour_path: Path,
+    voice: str = None,
     skip_existing: bool = True,
     force: bool = False
 ) -> dict:
@@ -185,7 +202,11 @@ async def process_tour(
     
     # Create audio directory
     audio_dir.mkdir(parents=True, exist_ok=True)
-    
+
+    # Resolve voice: CLI override > input.json > DEFAULT_VOICE
+    if voice is None:
+        voice = get_tour_voice(tour_path)
+
     # Load POI data
     with open(scripts_file, 'r', encoding='utf-8') as f:
         pois = json.load(f)
@@ -200,31 +221,51 @@ async def process_tour(
     successful = 0
     skipped = 0
     failed = 0
-    
+    failed_pois = []
+
     skip = skip_existing and not force
-    
+
     for poi in pois:
         output_file = audio_dir / f"{poi['num']:02d}.mp3"
-        
+
         if skip and output_file.exists():
             skipped += 1
             print(f"  ⏭ {poi['num']:02d}: {poi['name'][:35]}... (exists)")
             continue
-        
+
         result = await generate_audio_for_poi(poi, audio_dir, voice, skip_existing=False)
         if result:
             successful += 1
         else:
             failed += 1
-    
+            failed_pois.append(poi)
+
+    # Retry failed POIs
+    if failed_pois:
+        print("-" * 50)
+        print(f"Retrying {len(failed_pois)} failed POI(s)...")
+        retry_failed = []
+        for poi in failed_pois:
+            result = await generate_audio_for_poi(poi, audio_dir, voice, skip_existing=False)
+            if result:
+                successful += 1
+                failed -= 1
+            else:
+                retry_failed.append(poi)
+        failed_pois = retry_failed
+
     # Generate manifest
     manifest_path = generate_manifest(pois, audio_dir)
-    
+
     print("-" * 50)
     print(f"Tour '{tour_path.name}' complete:")
     print(f"  Generated: {successful}")
     print(f"  Skipped: {skipped}")
     print(f"  Failed: {failed}")
+    if failed_pois:
+        print(f"  Failed POIs:")
+        for poi in failed_pois:
+            print(f"    - {poi['num']:02d}: {poi['name']}")
     print(f"  Manifest: {manifest_path}")
     
     return {
@@ -267,8 +308,8 @@ Examples:
     )
     parser.add_argument(
         '--voice', '-v',
-        default=DEFAULT_VOICE,
-        help=f'TTS voice to use (default: {DEFAULT_VOICE})'
+        default=None,
+        help=f'TTS voice override (default: read from input.json, or {DEFAULT_VOICE})'
     )
     
     args = parser.parse_args()
