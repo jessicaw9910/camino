@@ -1,0 +1,1100 @@
+[
+  {
+    "num": 1,
+    "name": "Barcelona-Sants — Gateway to the Pyrenees",
+    "lat": 41.3783,
+    "lon": 2.1406,
+    "audio_file": "01.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 2,
+    "name": "The Catalan Question",
+    "lat": 41.68,
+    "lon": 2.49,
+    "audio_file": "02.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "1:30"
+  },
+  {
+    "num": 3,
+    "name": "Girona — City of a Thousand Sieges",
+    "lat": 41.9792,
+    "lon": 2.8171,
+    "audio_file": "03.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 4,
+    "name": "The Pyrenees Crossing — Escape Lines and Passeurs",
+    "lat": 42.45,
+    "lon": 2.87,
+    "audio_file": "04.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 5,
+    "name": "The Empordà Kitchen",
+    "lat": 42.12,
+    "lon": 2.88,
+    "audio_file": "05.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 6,
+    "name": "Perpignan Station — The Center of the Universe",
+    "lat": 42.6962,
+    "lon": 2.8801,
+    "audio_file": "06.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 7,
+    "name": "Langue d'Oc — The Other French",
+    "lat": 42.58,
+    "lon": 2.89,
+    "audio_file": "07.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 8,
+    "name": "Figueres — Dalí's Surrealist Homecoming",
+    "lat": 42.2649,
+    "lon": 2.9438,
+    "audio_file": "08.mp3",
+    "leg": "Barcelona to Perpignan",
+    "duration": "2:30"
+  },
+  {
+    "num": 9,
+    "name": "Le Castillet — The Red Gate",
+    "lat": 42.6988,
+    "lon": 2.8956,
+    "audio_file": "09.mp3",
+    "leg": "Perpignan",
+    "duration": "1:30"
+  },
+  {
+    "num": 10,
+    "name": "Place de la Loge — The Catalan Exchange",
+    "lat": 42.6983,
+    "lon": 2.8938,
+    "audio_file": "10.mp3",
+    "leg": "Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 11,
+    "name": "French Catalonia — The Forgotten Border",
+    "lat": 42.698,
+    "lon": 2.896,
+    "audio_file": "11.mp3",
+    "leg": "Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 12,
+    "name": "Cathédrale Saint-Jean-Baptiste",
+    "lat": 42.6984,
+    "lon": 2.8962,
+    "audio_file": "12.mp3",
+    "leg": "Perpignan",
+    "duration": "1:30"
+  },
+  {
+    "num": 13,
+    "name": "Palace of the Kings of Majorca",
+    "lat": 42.6935,
+    "lon": 2.8946,
+    "audio_file": "13.mp3",
+    "leg": "Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 14,
+    "name": "Marché de Perpignan — Tastes of Roussillon",
+    "lat": 42.6979,
+    "lon": 2.892,
+    "audio_file": "14.mp3",
+    "leg": "Perpignan",
+    "duration": "2:00"
+  },
+  {
+    "num": 15,
+    "name": "Elne — The Cloister on the Hill",
+    "lat": 42.5971,
+    "lon": 2.9639,
+    "audio_file": "15.mp3",
+    "leg": "Perpignan to Collioure",
+    "duration": "1:30"
+  },
+  {
+    "num": 16,
+    "name": "Argelès-sur-Mer — La Retirada",
+    "lat": 42.5487,
+    "lon": 3.0243,
+    "audio_file": "16.mp3",
+    "leg": "Perpignan to Collioure",
+    "duration": "2:00"
+  },
+  {
+    "num": 17,
+    "name": "The Côte Vermeille — Where the Pyrenees Meet the Sea",
+    "lat": 42.535,
+    "lon": 3.05,
+    "audio_file": "17.mp3",
+    "leg": "Perpignan to Collioure",
+    "duration": "1:30"
+  },
+  {
+    "num": 18,
+    "name": "Collioure — Where Fauvism Was Born",
+    "lat": 42.527,
+    "lon": 3.0783,
+    "audio_file": "18.mp3",
+    "leg": "Perpignan to Collioure",
+    "duration": "1:30"
+  },
+  {
+    "num": 19,
+    "name": "Château Royal de Collioure",
+    "lat": 42.5253,
+    "lon": 3.0834,
+    "audio_file": "19.mp3",
+    "leg": "Collioure",
+    "duration": "2:00"
+  },
+  {
+    "num": 20,
+    "name": "Notre-Dame-des-Anges — The Bell Tower in the Sea",
+    "lat": 42.5241,
+    "lon": 3.0845,
+    "audio_file": "20.mp3",
+    "leg": "Collioure",
+    "duration": "1:30"
+  },
+  {
+    "num": 21,
+    "name": "Chemin du Fauvisme — Matisse and Derain's Summer",
+    "lat": 42.5248,
+    "lon": 3.0838,
+    "audio_file": "21.mp3",
+    "leg": "Collioure",
+    "duration": "2:00"
+  },
+  {
+    "num": 22,
+    "name": "Anchois de Collioure",
+    "lat": 42.5259,
+    "lon": 3.083,
+    "audio_file": "22.mp3",
+    "leg": "Collioure",
+    "duration": "1:30"
+  },
+  {
+    "num": 23,
+    "name": "Côte Vermeille — Schist, Vines, and Sea",
+    "lat": 42.5235,
+    "lon": 3.085,
+    "audio_file": "23.mp3",
+    "leg": "Collioure",
+    "duration": "2:00"
+  },
+  {
+    "num": 24,
+    "name": "Cathar Country — The Crusade Against the South",
+    "lat": 42.95,
+    "lon": 2.95,
+    "audio_file": "24.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 25,
+    "name": "Narbonne — The First Roman Colony in Gaul",
+    "lat": 43.1882,
+    "lon": 3.0035,
+    "audio_file": "25.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 26,
+    "name": "The Via Domitia — Rome's First Road in Gaul",
+    "lat": 43.05,
+    "lon": 3.02,
+    "audio_file": "26.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 27,
+    "name": "Port-la-Nouvelle — The Étangs",
+    "lat": 43.0199,
+    "lon": 3.0392,
+    "audio_file": "27.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 28,
+    "name": "Béziers — The Massacre and the Canal",
+    "lat": 43.34,
+    "lon": 3.22,
+    "audio_file": "28.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 29,
+    "name": "Languedoc-Occitanie — France's Radical South",
+    "lat": 43.33,
+    "lon": 3.3,
+    "audio_file": "29.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 30,
+    "name": "The Largest Vineyard in the World",
+    "lat": 43.28,
+    "lon": 3.12,
+    "audio_file": "30.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 31,
+    "name": "Agde — The Black Greek City",
+    "lat": 43.31,
+    "lon": 3.47,
+    "audio_file": "31.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 32,
+    "name": "The Étang de Thau — The Oyster Mirror",
+    "lat": 43.42,
+    "lon": 3.62,
+    "audio_file": "32.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 33,
+    "name": "Sète — The Island That Sings",
+    "lat": 43.4,
+    "lon": 3.696,
+    "audio_file": "33.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 34,
+    "name": "Frontignan — Muscat and Oysters",
+    "lat": 43.445,
+    "lon": 3.7586,
+    "audio_file": "34.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 35,
+    "name": "Picpoul de Pinet — The Oyster Wine",
+    "lat": 43.48,
+    "lon": 3.8,
+    "audio_file": "35.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 36,
+    "name": "The Butter Line — Two Frances",
+    "lat": 43.52,
+    "lon": 3.82,
+    "audio_file": "36.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 37,
+    "name": "Montpellier — The Oldest Medical School",
+    "lat": 43.6035,
+    "lon": 3.8794,
+    "audio_file": "37.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 38,
+    "name": "Palavas and the Lido — Languedoc's Sand Barrier",
+    "lat": 43.56,
+    "lon": 3.88,
+    "audio_file": "38.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 39,
+    "name": "The Troubadours — Poets of the South",
+    "lat": 43.69,
+    "lon": 4.08,
+    "audio_file": "39.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 40,
+    "name": "Lunel — Moonlight and Translators",
+    "lat": 43.6792,
+    "lon": 4.1311,
+    "audio_file": "40.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 41,
+    "name": "The Camargue — Horses, Bulls, and Pink Salt",
+    "lat": 43.71,
+    "lon": 4.18,
+    "audio_file": "41.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 42,
+    "name": "Aigues-Mortes — The Walled Crusader Port",
+    "lat": 43.72,
+    "lon": 4.17,
+    "audio_file": "42.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 43,
+    "name": "Vergèze — Where Perrier Comes From",
+    "lat": 43.7399,
+    "lon": 4.2188,
+    "audio_file": "43.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 44,
+    "name": "De Nîmes — The Fabric That Conquered the World",
+    "lat": 43.79,
+    "lon": 4.32,
+    "audio_file": "44.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 45,
+    "name": "Nîmes — The Crocodile and the Palm",
+    "lat": 43.8328,
+    "lon": 4.3662,
+    "audio_file": "45.mp3",
+    "leg": "Collioure to Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 46,
+    "name": "Les Arènes — The Best-Preserved Amphitheater",
+    "lat": 43.8345,
+    "lon": 4.3598,
+    "audio_file": "46.mp3",
+    "leg": "Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 47,
+    "name": "Maison Carrée — The Temple That Built Virginia",
+    "lat": 43.8381,
+    "lon": 4.3562,
+    "audio_file": "47.mp3",
+    "leg": "Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 48,
+    "name": "Carré d'Art — Ancient and Modern",
+    "lat": 43.8382,
+    "lon": 4.3568,
+    "audio_file": "48.mp3",
+    "leg": "Nîmes",
+    "duration": "1:30"
+  },
+  {
+    "num": 49,
+    "name": "Jardins de la Fontaine — The Sacred Spring",
+    "lat": 43.8398,
+    "lon": 4.3498,
+    "audio_file": "49.mp3",
+    "leg": "Nîmes",
+    "duration": "2:00"
+  },
+  {
+    "num": 50,
+    "name": "Old Nîmes — Denim, Brandade, and the Wars of Religion",
+    "lat": 43.8368,
+    "lon": 4.3595,
+    "audio_file": "50.mp3",
+    "leg": "Nîmes",
+    "duration": "2:30"
+  },
+  {
+    "num": 51,
+    "name": "Pont du Gard — Roman Precision",
+    "lat": 43.8166,
+    "lon": 4.5063,
+    "audio_file": "51.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 52,
+    "name": "Arles — Van Gogh's Fifteen Months",
+    "lat": 43.6848,
+    "lon": 4.6318,
+    "audio_file": "52.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "3:00"
+  },
+  {
+    "num": 53,
+    "name": "Beaucaire — The Fair That Fed Europe",
+    "lat": 43.806,
+    "lon": 4.644,
+    "audio_file": "53.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 54,
+    "name": "Tarascon — The Dragon and the Castle",
+    "lat": 43.8014,
+    "lon": 4.6572,
+    "audio_file": "54.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 55,
+    "name": "Les Alpilles — The Miniature Alps",
+    "lat": 43.75,
+    "lon": 4.66,
+    "audio_file": "55.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 56,
+    "name": "Marseille 1943 — The Destruction of the Old Port",
+    "lat": 43.63,
+    "lon": 4.8,
+    "audio_file": "56.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 57,
+    "name": "The Crau — Europe's Only Steppe",
+    "lat": 43.62,
+    "lon": 4.86,
+    "audio_file": "57.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 58,
+    "name": "Miramas — The Steppe and the Lagoon",
+    "lat": 43.5806,
+    "lon": 4.9995,
+    "audio_file": "58.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 59,
+    "name": "Salon-de-Provence — Nostradamus and the Patrouille",
+    "lat": 43.58,
+    "lon": 5.02,
+    "audio_file": "59.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 60,
+    "name": "The Étang de Berre — Industry and Flamingos",
+    "lat": 43.49,
+    "lon": 5.23,
+    "audio_file": "60.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 61,
+    "name": "Marseille Saint-Charles — The Grand Staircase",
+    "lat": 43.3025,
+    "lon": 5.3814,
+    "audio_file": "61.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 62,
+    "name": "La Marseillaise — A City That Named the Nation",
+    "lat": 43.31,
+    "lon": 5.37,
+    "audio_file": "62.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 63,
+    "name": "The Provençal Accent — How the South Speaks",
+    "lat": 43.34,
+    "lon": 5.39,
+    "audio_file": "63.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 64,
+    "name": "Provence as a Nation",
+    "lat": 43.36,
+    "lon": 5.41,
+    "audio_file": "64.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 65,
+    "name": "The Mistral — The Wind That Shapes Everything",
+    "lat": 43.4,
+    "lon": 5.43,
+    "audio_file": "65.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 66,
+    "name": "Calissons and Navettes — The Provençal Sweet Tooth",
+    "lat": 43.42,
+    "lon": 5.44,
+    "audio_file": "66.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "1:30"
+  },
+  {
+    "num": 67,
+    "name": "Aix-en-Provence — City of a Thousand Fountains",
+    "lat": 43.5231,
+    "lon": 5.4455,
+    "audio_file": "67.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 68,
+    "name": "Gardanne — Cézanne's Geometry",
+    "lat": 43.4555,
+    "lon": 5.4633,
+    "audio_file": "68.mp3",
+    "leg": "Nîmes to Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 69,
+    "name": "Cours Mirabeau — The Grand Boulevard",
+    "lat": 43.5264,
+    "lon": 5.4489,
+    "audio_file": "69.mp3",
+    "leg": "Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 70,
+    "name": "Cathédrale Saint-Sauveur — Every Century at Once",
+    "lat": 43.5319,
+    "lon": 5.4476,
+    "audio_file": "70.mp3",
+    "leg": "Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 71,
+    "name": "Place Richelme — Calissons and Rosé",
+    "lat": 43.5277,
+    "lon": 5.4484,
+    "audio_file": "71.mp3",
+    "leg": "Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 72,
+    "name": "Quartier Mazarin — The Aristocratic South",
+    "lat": 43.5248,
+    "lon": 5.4493,
+    "audio_file": "72.mp3",
+    "leg": "Aix-en-Provence",
+    "duration": "2:00"
+  },
+  {
+    "num": 73,
+    "name": "Pastis — The Anise Ritual",
+    "lat": 43.3,
+    "lon": 5.48,
+    "audio_file": "73.mp3",
+    "leg": "Marseille to Cassis",
+    "duration": "2:00"
+  },
+  {
+    "num": 74,
+    "name": "Cassis — White Wine and Sea Cliffs",
+    "lat": 43.2339,
+    "lon": 5.5529,
+    "audio_file": "74.mp3",
+    "leg": "Marseille to Cassis",
+    "duration": "2:00"
+  },
+  {
+    "num": 75,
+    "name": "Aubagne — Pagnol and the Santons",
+    "lat": 43.2958,
+    "lon": 5.5667,
+    "audio_file": "75.mp3",
+    "leg": "Marseille to Cassis",
+    "duration": "2:00"
+  },
+  {
+    "num": 76,
+    "name": "Port de Cassis — Bouillabaisse, Bourride, and Sea Urchins",
+    "lat": 43.2143,
+    "lon": 5.5351,
+    "audio_file": "76.mp3",
+    "leg": "Cassis",
+    "duration": "3:00"
+  },
+  {
+    "num": 77,
+    "name": "Les Calanques — The White Inlets",
+    "lat": 43.2094,
+    "lon": 5.5241,
+    "audio_file": "77.mp3",
+    "leg": "Cassis",
+    "duration": "2:30"
+  },
+  {
+    "num": 78,
+    "name": "Marseille Saint-Charles — Down the Grand Escalier",
+    "lat": 43.3025,
+    "lon": 5.3814,
+    "audio_file": "78.mp3",
+    "leg": "Marseille: Vieux-Port",
+    "duration": "1:30"
+  },
+  {
+    "num": 79,
+    "name": "Vieux-Port — The Fish Market",
+    "lat": 43.2932,
+    "lon": 5.373,
+    "audio_file": "79.mp3",
+    "leg": "Marseille: Vieux-Port",
+    "duration": "2:30"
+  },
+  {
+    "num": 80,
+    "name": "Marseille and the Maghreb — The Other Shore",
+    "lat": 43.296,
+    "lon": 5.375,
+    "audio_file": "80.mp3",
+    "leg": "Marseille: Vieux-Port",
+    "duration": "2:30"
+  },
+  {
+    "num": 81,
+    "name": "Fort Saint-Jean and MuCEM",
+    "lat": 43.2933,
+    "lon": 5.3639,
+    "audio_file": "81.mp3",
+    "leg": "Marseille: Vieux-Port",
+    "duration": "2:00"
+  },
+  {
+    "num": 82,
+    "name": "Plage des Catalans — The Catalan Fishermen",
+    "lat": 43.2907,
+    "lon": 5.3559,
+    "audio_file": "82.mp3",
+    "leg": "Marseille: Vieux-Port",
+    "duration": "2:00"
+  },
+  {
+    "num": 83,
+    "name": "Pointe Rouge — Château d'If and the Frioul",
+    "lat": 43.243,
+    "lon": 5.3673,
+    "audio_file": "83.mp3",
+    "leg": "Marseille: Calanques",
+    "duration": "1:30"
+  },
+  {
+    "num": 84,
+    "name": "Les Cabanons — Marseille's Weekend Ritual",
+    "lat": 43.2179,
+    "lon": 5.346,
+    "audio_file": "84.mp3",
+    "leg": "Marseille: Calanques",
+    "duration": "1:30"
+  },
+  {
+    "num": 85,
+    "name": "Les Goudes — End of the Road",
+    "lat": 43.2151,
+    "lon": 5.3459,
+    "audio_file": "85.mp3",
+    "leg": "Marseille: Calanques",
+    "duration": "1:30"
+  },
+  {
+    "num": 86,
+    "name": "Port de Cassis — Completing the Circuit",
+    "lat": 43.2143,
+    "lon": 5.5351,
+    "audio_file": "86.mp3",
+    "leg": "Marseille: Calanques",
+    "duration": "1:30"
+  },
+  {
+    "num": 87,
+    "name": "The Calanques from the Coast — Limestone and Sea",
+    "lat": 43.21,
+    "lon": 5.56,
+    "audio_file": "87.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 88,
+    "name": "La Ciotat — Where Cinema Began",
+    "lat": 43.1996,
+    "lon": 5.6324,
+    "audio_file": "88.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 89,
+    "name": "Bandol — Mourvèdre Country",
+    "lat": 43.1403,
+    "lon": 5.7501,
+    "audio_file": "89.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 90,
+    "name": "Sanary-sur-Mer — The German Exile Colony",
+    "lat": 43.119,
+    "lon": 5.8,
+    "audio_file": "90.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 91,
+    "name": "Toulon — The Naval Fortress",
+    "lat": 43.1281,
+    "lon": 5.9292,
+    "audio_file": "91.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 92,
+    "name": "Le Pradet to Hyères — The Salt Road",
+    "lat": 43.15,
+    "lon": 6.02,
+    "audio_file": "92.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 93,
+    "name": "Hyères — The First Resort",
+    "lat": 43.12,
+    "lon": 6.13,
+    "audio_file": "93.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 94,
+    "name": "The Italian Zone — An Unlikely Refuge",
+    "lat": 43.3,
+    "lon": 6.2,
+    "audio_file": "94.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 95,
+    "name": "The Maures Massif — Cork and Chestnuts",
+    "lat": 43.32,
+    "lon": 6.28,
+    "audio_file": "95.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 96,
+    "name": "Operation Dragoon — The Other D-Day",
+    "lat": 43.35,
+    "lon": 6.35,
+    "audio_file": "96.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 97,
+    "name": "Les Arcs-Draguignan — The Rosé Heartland",
+    "lat": 43.456,
+    "lon": 6.4825,
+    "audio_file": "97.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 98,
+    "name": "The Maquis — Resistance in the Hills",
+    "lat": 43.44,
+    "lon": 6.58,
+    "audio_file": "98.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 99,
+    "name": "Fréjus — Rome's Navy Yard",
+    "lat": 43.433,
+    "lon": 6.737,
+    "audio_file": "99.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 100,
+    "name": "Saint-Raphaël — The Red Estérel",
+    "lat": 43.4235,
+    "lon": 6.7689,
+    "audio_file": "100.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 101,
+    "name": "The Estérel — Red Porphyry",
+    "lat": 43.46,
+    "lon": 6.85,
+    "audio_file": "101.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 102,
+    "name": "Grasse — The Perfume Capital",
+    "lat": 43.55,
+    "lon": 6.98,
+    "audio_file": "102.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 103,
+    "name": "Mandelieu-La Napoule — The Mimosa Coast",
+    "lat": 43.53,
+    "lon": 6.94,
+    "audio_file": "103.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 104,
+    "name": "The Invention of the Riviera",
+    "lat": 43.51,
+    "lon": 6.95,
+    "audio_file": "104.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 105,
+    "name": "The Côte d'Azur Economy — Beyond the Postcard",
+    "lat": 43.55,
+    "lon": 7.0,
+    "audio_file": "105.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 106,
+    "name": "Cannes — The Festival and the Fishing Port",
+    "lat": 43.551,
+    "lon": 7.013,
+    "audio_file": "106.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 107,
+    "name": "Socca and Pissaladière — The Niçois Kitchen",
+    "lat": 43.57,
+    "lon": 7.03,
+    "audio_file": "107.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 108,
+    "name": "The Lérins Islands — The Iron Mask",
+    "lat": 43.52,
+    "lon": 7.05,
+    "audio_file": "108.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 109,
+    "name": "Vallauris — Picasso's Pottery",
+    "lat": 43.58,
+    "lon": 7.055,
+    "audio_file": "109.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 110,
+    "name": "Golfe-Juan — Napoléon's Return",
+    "lat": 43.564,
+    "lon": 7.075,
+    "audio_file": "110.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 111,
+    "name": "Antibes — Picasso's Mediterranean",
+    "lat": 43.5858,
+    "lon": 7.1197,
+    "audio_file": "111.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 112,
+    "name": "Saint-Paul-de-Vence — The Art Village",
+    "lat": 43.66,
+    "lon": 7.15,
+    "audio_file": "112.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 113,
+    "name": "Cagnes-sur-Mer — Renoir's Last Garden",
+    "lat": 43.664,
+    "lon": 7.148,
+    "audio_file": "113.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 114,
+    "name": "The Réseau Marcel — Saving the Children of Nice",
+    "lat": 43.65,
+    "lon": 7.19,
+    "audio_file": "114.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 115,
+    "name": "Nice-Ville — A City That Changed Countries",
+    "lat": 43.7046,
+    "lon": 7.2624,
+    "audio_file": "115.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 116,
+    "name": "Villefranche-sur-Mer — The Deep Harbor",
+    "lat": 43.705,
+    "lon": 7.31,
+    "audio_file": "116.mp3",
+    "leg": "Cassis to Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 117,
+    "name": "Place Masséna — Where the City Pivots",
+    "lat": 43.697,
+    "lon": 7.2705,
+    "audio_file": "117.mp3",
+    "leg": "Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 118,
+    "name": "Cours Saleya — Socca, Pissaladière, and Matisse",
+    "lat": 43.6953,
+    "lon": 7.2759,
+    "audio_file": "118.mp3",
+    "leg": "Nice",
+    "duration": "2:30"
+  },
+  {
+    "num": 119,
+    "name": "Vieux Nice — Baroque and Gelato",
+    "lat": 43.6963,
+    "lon": 7.2756,
+    "audio_file": "119.mp3",
+    "leg": "Nice",
+    "duration": "1:30"
+  },
+  {
+    "num": 120,
+    "name": "Colline du Château — The View That Explains Everything",
+    "lat": 43.6949,
+    "lon": 7.2807,
+    "audio_file": "120.mp3",
+    "leg": "Nice",
+    "duration": "2:00"
+  },
+  {
+    "num": 121,
+    "name": "Promenade des Anglais — The English Road",
+    "lat": 43.6942,
+    "lon": 7.2603,
+    "audio_file": "121.mp3",
+    "leg": "Nice",
+    "duration": "2:30"
+  },
+  {
+    "num": 122,
+    "name": "Place Garibaldi — The Italian Hero of a French City",
+    "lat": 43.7,
+    "lon": 7.2768,
+    "audio_file": "122.mp3",
+    "leg": "Nice",
+    "duration": "2:00"
+  }
+]

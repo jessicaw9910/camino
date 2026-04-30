@@ -1,0 +1,7 @@
+{
+  "name": "South of France",
+  "description": "A GPS-triggered audio guide of train journeys from Barcelona to Nice.",
+  "url_map": "https://www.google.com/maps/d/u/0/edit?mid=1zHcN09gdyJvs894TgXZvXBgH_wRmNJs&usp=sharing",
+  "url_cover": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/21/88/f1/3a/calanque-d-en-vau-seem.jpg",
+  "voice": "en-US-AvaMultilingualNeural"
+}
