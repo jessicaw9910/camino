@@ -77,6 +77,14 @@ from kivy.lang import Builder
 from kivy.core.text import LabelBase
 from kivy import kivy_data_dir
 
+# Transit type marker colors
+TRANSIT_COLORS = {
+    "car":     [1.0, 0.0, 0.0, 1.0],   # Red
+    "train":   [1.0, 0.65, 0.0, 1.0],   # Orange
+    "walking": [1.0, 1.0, 0.0, 1.0],    # Yellow
+}
+DEFAULT_TRANSIT_TYPE = "car"
+
 # Register DejaVuSans (bundled with Kivy) so buttons can render Unicode symbols
 # that Kivy's default Roboto font does not cover: ▶ ■ ▼ ▲ ❚
 LabelBase.register(
@@ -784,6 +792,9 @@ class MapViewWidget(BoxLayout):
                 lat=poi['lat'],
                 lon=poi['lon']
             )
+            # Color marker by transit type (default: car/red for backwards compat)
+            transit_type = poi.get('type', DEFAULT_TRANSIT_TYPE)
+            marker.color = TRANSIT_COLORS.get(transit_type, TRANSIT_COLORS[DEFAULT_TRANSIT_TYPE])
             # Store POI reference on marker
             marker.poi = poi
             
