@@ -29,11 +29,9 @@ python src/generate_audio.py --force         # regenerate existing files
 # Generate placeholder cover image
 python src/create_cover.py
 
-# Prepare audio for Android APK bundling (copies data/rio_grande_rift/audio → app/audio)
-./prepare_audio.sh
-
-# Build Android APK (from project root, not app/)
-cd app && buildozer android debug
+# Build Android APK (from project root, where buildozer.spec lives)
+# First build compiles full toolchain (~15-30 min); subsequent builds are incremental (~1-3 min)
+buildozer android debug
 
 # Bootstrap a new tour: fetch KML from Google My Maps + cover image + write tour.json
 python src/fetch_resources.py <tour_name>             # reads data/<tour>/input.json
@@ -82,7 +80,7 @@ GPS uses `plyer` on Android/iOS. On desktop it falls back to a simulated random-
 Async script using `edge-tts`. Strips `[1]`, `[2]` citation markers before synthesis. Default voice: `en-US-AndrewMultilingualNeural` (handles Spanish words naturally in English text). Also generates `audio/manifest.json`.
 
 ### Android Build
-`app/buildozer.spec` configures the Android build. Audio files must be copied to `app/audio/` via `prepare_audio.sh` before building, since `buildozer.spec` includes `audio/*` as a source pattern. Target API 33, supports `arm64-v8a` and `armeabi-v7a`.
+`buildozer.spec` (in project root) configures the Android build. All tour data under `data/` is bundled automatically via the `source.include_patterns = app/*,data/**/*` directive. Target API 33, supports `arm64-v8a` and `armeabi-v7a`. The first build compiles the full toolchain and dependencies (~15-30 min); subsequent builds repackage app code and data only (~1-3 min).
 
 ### Platform Differences
 `get_data_dir()` in `app/main.py` searches multiple paths in order — Android app storage, Android external storage, then relative paths. GPS and Android permissions are requested at runtime only on `android`/`ios` platforms.

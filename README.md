@@ -25,7 +25,6 @@ camino/
 │   └── main.py                # Kivy application (single-file)
 ├── main.py                    # Entry point for Buildozer/Android
 ├── buildozer.spec             # Android build configuration
-├── prepare_audio.sh           # Copy audio files for APK bundling
 ├── icon.png                   # App icon (512x512)
 ├── requirements.txt
 └── README.md
@@ -171,13 +170,33 @@ The app will:
 
 ### Step 7: Build Android APK
 
-```bash
-# Copy audio files into app directory for bundling
-./prepare_audio.sh
+All tour data under `data/` (audio, scripts, covers) is bundled automatically via `buildozer.spec` — no manual copying step is needed.
 
-# Build the APK (from project root)
+```bash
+# First build — compiles the full Android toolchain + all Python dependencies.
+# Takes 15-30+ minutes. Run from the project root (where buildozer.spec lives):
 buildozer android debug
-# Output: bin/*.apk
+# Output: bin/camino-*-debug.apk
+
+# Subsequent builds — reuses compiled dependencies, only repackages app code
+# and data. Much faster (1-3 minutes):
+buildozer android debug
+
+# Install directly to a connected device via USB:
+buildozer android debug deploy
+
+# Build + deploy + stream device logs:
+buildozer android debug deploy run logcat
+```
+
+The first `buildozer android debug` downloads the Android SDK/NDK, compiles Python and all C-extension dependencies (Kivy, Pillow, etc.) — this is a one-time cost stored in `.buildozer/`. Subsequent builds skip all of that and only repackage your Python source and data files, which is significantly faster.
+
+If you need to force a full rebuild of dependencies (e.g., after changing `requirements` in `buildozer.spec`):
+
+```bash
+# Clean the build and start fresh
+buildozer android clean
+buildozer android debug
 ```
 
 ## Technical Notes

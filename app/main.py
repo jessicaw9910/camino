@@ -18,7 +18,6 @@ Requirements:
 import json
 import os
 import re
-import textwrap
 import webbrowser
 from pathlib import Path
 from functools import partial
@@ -77,13 +76,61 @@ from kivy.lang import Builder
 from kivy.core.text import LabelBase
 from kivy import kivy_data_dir
 
-# Transit type marker colors
+# Transit type marker colors (RGB tuples, 0-255)
 TRANSIT_COLORS = {
-    "car":     [1.0, 0.0, 0.0, 1.0],   # Red
-    "train":   [1.0, 0.65, 0.0, 1.0],   # Orange
-    "walking": [1.0, 1.0, 0.0, 1.0],    # Yellow
+    "car":     (231, 76, 60),    # Red (matches default marker.png)
+    "train":   (255, 165, 0),    # Orange
+    "walking": (255, 230, 0),    # Yellow
 }
 DEFAULT_TRANSIT_TYPE = "car"
+
+# Marker image paths keyed by transit type, populated at startup
+_MARKER_IMAGES = {}
+
+
+def _generate_marker_images():
+    """Generate tinted marker PNGs for each transit type.
+
+    Reads the default mapview marker.png, recolors the opaque pixels to each
+    transit color, and saves them next to this script.  The 'car' type reuses
+    the original image unchanged.
+    """
+    from PIL import Image as PILImage
+
+    from kivy_garden.mapview import MapMarker as _MM
+    from os.path import join, dirname
+    import inspect
+    base_path = join(dirname(inspect.getfile(_MM)), 'icons', 'marker.png')
+
+    _MARKER_IMAGES["car"] = base_path
+
+    base_img = PILImage.open(base_path).convert("RGBA")
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+
+    for transit_type, rgb in TRANSIT_COLORS.items():
+        if transit_type == "car":
+            continue
+        out_path = os.path.join(app_dir, f"marker_{transit_type}.png")
+        # Only regenerate if missing
+        if not os.path.exists(out_path):
+            img = base_img.copy()
+            pixels = img.load()
+            for y in range(img.height):
+                for x in range(img.width):
+                    r, g, b, a = pixels[x, y]
+                    if a > 0:
+                        intensity = max(r, g, b) / 255.0
+                        pixels[x, y] = (
+                            int(rgb[0] * intensity),
+                            int(rgb[1] * intensity),
+                            int(rgb[2] * intensity),
+                            a,
+                        )
+            img.save(out_path)
+        _MARKER_IMAGES[transit_type] = out_path
+
+
+_generate_marker_images()
 
 # Register DejaVuSans (bundled with Kivy) so buttons can render Unicode symbols
 # that Kivy's default Roboto font does not cover: ▶ ■ ▼ ▲ ❚
@@ -591,7 +638,8 @@ def discover_tours(data_dir: Path) -> list:
                     })
                 except Exception as e:
                     print(f"Error loading tour from {subdir}: {e}")
-    
+
+    tours.sort(key=lambda t: t['name'].lower())
     return tours
 
 
@@ -788,13 +836,14 @@ class MapViewWidget(BoxLayout):
             self.map_view.bind(on_touch_up=self._handle_map_touch)
         
         for poi in pois:
+            # Select marker image by transit type (default: car/red)
+            transit_type = poi.get('type', DEFAULT_TRANSIT_TYPE)
+            marker_src = _MARKER_IMAGES.get(transit_type, _MARKER_IMAGES["car"])
             marker = MapMarkerPopup(
                 lat=poi['lat'],
-                lon=poi['lon']
+                lon=poi['lon'],
+                source=marker_src
             )
-            # Color marker by transit type (default: car/red for backwards compat)
-            transit_type = poi.get('type', DEFAULT_TRANSIT_TYPE)
-            marker.color = TRANSIT_COLORS.get(transit_type, TRANSIT_COLORS[DEFAULT_TRANSIT_TYPE])
             # Store POI reference on marker
             marker.poi = poi
             
@@ -822,7 +871,7 @@ class MapViewWidget(BoxLayout):
             
             self.map_view.add_marker(marker)
             self.markers.append(marker)
-    
+
     def _update_label_rect(self, instance, value):
         """Update label background rectangle."""
         if hasattr(instance, '_bg_rect'):
@@ -983,7 +1032,8 @@ class TourScreen(Screen):
                     'leg': poi.get('leg', ''),
                     'duration': poi.get('duration', ''),
                     'body': poi.get('body', []),
-                    'sources': poi.get('sources', [])
+                    'sources': poi.get('sources', []),
+                    'type': poi.get('type', DEFAULT_TRANSIT_TYPE),
                 })
             self.audio_dir = tour['path'] / 'audio'
         elif manifest_file.exists():
